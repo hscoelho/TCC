@@ -1,0 +1,108 @@
+% Meta-monografia de exemplo genérico de uso da classe delaetex.cls
+% Copyright (C) 2004..2016 Walter Fetter Lages <fetter@ece.ufrgs.br>
+%
+% This file was adapted from:
+% Meta-monografia de exemplo genérico de uso da classe deletex.cls
+% Copyright (C) 2004 Walter Fetter Lages <w.fetter@ieee.org>
+%
+% This is free software, distributed under the GNU GPL; please take
+% a look in `deletex.cls' to see complete information on using, copying
+% and redistributing these files
+%
+%\documentclass[repeatfields,openright,overleaf,nomicrotype]{tcc}
+\documentclass[repeatfields,xlists,xpacks,oneside,yearsonly]{ufrgscca}
+\addbibresource{modeloTCC.bib}
+
+%
+% inicio do documento
+%
+%\RenewDocumentCommand{\fullcite}{}{}
+%\RenewDocumentCommand{\cite}{}{}
+%\let\MakeUppercase\uppercase
+%\RenewDocumentCommand{\MakeUppercase}{m}{\uppercase{#1}}
+
+\begin{document}
+
+\maketitle
+
+
+% dedicatoria é opcional
+%\nonum\chapter{Dedicatória} %vai ter uma entrada no sumário
+%\notoc\chapter{Dedicatória} %não vai aparecer no sumário
+
+% Dedico este trabalho aos meus pais, em especial pela dedicação e apoio em
+% todos os momentos difíceis.
+
+% agradecimentos são opcionais
+%\nonum\chapter{Agradecimentos}
+%\notoc\chapter{Agradecimentos}
+
+% \`{A} Universidade Federal do Rio Grande do Sul, UFRGS, pela
+% oportunidade de realização de estudos.
+
+% Aos colegas de curso pelo seu auxílio nas tarefas desenvolvidas durante o
+% curso e apoio na revisão deste trabalho.
+
+% Agradeço ao \LaTeX\ por não ter vírus de macro\ldots
+
+% resumo no idioma do documento
+\begin{abstract}
+
+\end{abstract}
+
+% resumo no outro idioma
+% como parametro devem ser passadas as palavras-chave
+% no outro idioma, separadas por vírgulas
+% \begin{otherabstract}{Electrical Engineering, Signal Processing, Automation and Control, Electronic and Instrumentation}
+
+% \end{otherabstract}
+
+% sumario
+\setcounter{tocdepth}{3}
+
+% lista de ilustrações
+\listoffigures
+
+% lista de tabelas
+\listoftables
+
+% lista de listagens (código fonte)
+\listofcodelist %% doesn't work on overleaf
+
+% lista de abreviaturas e siglas
+% o parametro deve ser a abreviatura mais longa
+\begin{listofabbrv}{PPGEE}
+    \item[ROS] Robot Operating System
+\end{listofabbrv}
+
+% lista de símbolos é opcional
+\begin{listofsymbols}{$\alpha\beta\pi\omega$}
+    \item[$\sum$] Somatório
+\end{listofsymbols}
+
+\tableofcontents
+
+
+\chapter{Introdução}
+
+\chapter{Revisão da Literatura}
+\label{revisao}
+
+\chapter{Metodologia}
+\label{partes}
+
+\chapter{Conclusão}
+\label{conclusao}
+
+\printbibliography
+
+\begin{appendix}
+
+\end{appendix}
+
+
+\begin{annex}
+\end{annex}
+
+\end{document}
+
