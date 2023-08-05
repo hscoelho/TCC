@@ -67,48 +67,42 @@
 
 \chapter{Introdução}
 
+Robótica deve seu maior sucesso a indústria de manufatura, onde são utilizados
+principalmente robôs manipuladores\cite{IntroductionToMobileRobots}.
+Porém, estes robôs tem como limitação sua mobilidade, sendo incapazes de se movimentar
+pela planta, limitando suas tarefas a um espaço fixo.
+Um robô móvel, por outro lado, é capaz de se movimentar pelo seu ambiente de
+trabalho, aumentando a gama de tarefas que podem ser realizadas.
+
+Por esta razão, o mercado de robôs móveis está em crescimento, como mostra a
+Figura \ref{fig:mercado_robo}.
+Estes robôs podem ser utilizados em ambientes internos, como hospitais, fábricas
+ou em centros de distribuição, como o robô Proteus, da Amazon\cite{amazon_robot}.
+Esta categoria de robôs, porém, tem como desafio a navegação em ambientes dinâmicos,
+muitas vezes compartilhados com humanos.
+Portanto, é necessário um robô capaz de perceber seu ambiente e replanejar sua
+trajetória em tempo real de modo a evitar colisões.
 
 \begin{figure}[htbp]
     {
         \centering
         \caption{Mercado global de robôs autônomos de 2016 a 2021, com projeção até 2028.}
         \label{fig:mercado_robo}
-        \includegraphics[width=0.8\textwidth]{mercado_robo}\\
+        \includegraphics[width=0.9\textwidth]{mercado_robo}\\
     }
     {\sourcecitation{\textcite{robot_market}}}
 \end{figure}
 
-CITAR~\cite{amazon_robot} nome: Proteus
-% Proteus autonomously moves through 
-% our facilities using advanced safety,
-% perception, and navigation technology developed by Amazon. 
-% The robot was built to be automatically directed to perform 
-% its work and move around employees—meaning it has no need to
-% be confined to restricted areas. It can operate in a manner 
-% that augments simple, safe interaction between technology and 
-% people—opening up a broader range of possible uses to help our ...
+É neste contexto que se insere o projeto atual.
+Utilizando o robô Twil, é proposto um sistema de navegação autônomo que utiliza
+sensores de percepção e um sistema de planejamento de trajetórias para navegar
+em ambientes dinâmicos ou pouco conhecidos.
 
-
-%Robótica teve seu maior sucesso pela industria de manufatura,
-%em que são utilizados manipuladores-> citar Introduction to etc
-%Porém, estes robôs tem como limitação sua mobilidade.
-%Um robô móvel seria capaz de se movimentar pela planta, realizando tarefas
-%anteriormente não possiveis.
-%O mercado para este tipo de robô está em crescimento, como mostra a
-%Figura \ref{fig:mercado_robo}.
-%
-%Muitos desses robôs são utilizados em ambientes internos,
-%como hospitais, fábricas e centros de distribuição.
-%Um exemplo deste tipo de robô é o da Amazon ..
-%Nestes casos, o robô está trabalhando com um ambiente dinamico e pouco conhecido,
-%e por isso é necessário que o robô seja de perceber o seu ambiente e se localizar nele.
-%O robô Twil, estudado neste trabalho se encaixa neste perfil, sendo um robô móvel
-%
-%Para solucionar novos problemas..
-%Robótica é um campo novo em constante desenvolvimento\dots
-%Desde os últimos trabalhos de conclusão de curso envolvendo este robô
-%citar petry e rahul aqui
-%houve uma grande evolução no \textit{framework} utilizado para desenvolvimento
+Este robô já foi utilizado em trabalhos anteriores de conclusão de curso,
+como em \textcite{petry_tcc} e \textcite{rahul_tcc}.
+Porém, devido ao avanço do campo de robótica móvel, novas ferramentas
+foram desenvolvidas, como o ROS 2 e o \textit{Navigation2}, que utilizam
+técnicas modernas que serão abordadas ao longo deste trabalho.
 
 \chapter{Revisão da Literatura}
 \label{revisao}
@@ -337,7 +331,7 @@ falar do controlador
         \label{fig:planta_centenario}
         \includegraphics[width=0.5\textwidth]{centenario_floor_plan.png}\\
     }
-    {\sourcecitation{citar o petry aqui}}
+    {\sourcecitation{\textcite{petry_tcc}}}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -391,13 +385,13 @@ rosdeps/containerização
 
 \printbibliography
 
-\begin{appendix}
-
-\end{appendix}
-
-
-\begin{annex}
-\end{annex}
+%\begin{appendix}
+%
+%\end{appendix}
+%
+%
+%\begin{annex}
+%\end{annex}
 
 \end{document}
 
