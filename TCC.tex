@@ -10,6 +10,7 @@
 % and redistributing these files
 %
 %\documentclass[repeatfields,openright,overleaf,nomicrotype]{tcc}
+% LTeX: language=pt-BR
 \documentclass[repeatfields,xlists,xpacks,oneside,yearsonly]{ufrgscca}
 
 \graphicspath{{./img/}}
@@ -71,7 +72,7 @@
 
 Robótica deve seu maior sucesso a indústria de manufatura, onde são utilizados
 principalmente robôs manipuladores~\cite{IntroductionToMobileRobots}.
-Porém, estes robôs tem como limitação sua mobilidade, sendo incapazes de se movimentar
+Porém, estes robôs têm como limitação sua mobilidade, incapazes de se movimentar
 pela planta, limitando suas tarefas a um espaço fixo.
 Um robô móvel, por outro lado, é capaz de se movimentar pelo seu ambiente de
 trabalho, aumentando a gama de tarefas que podem ser realizadas.
@@ -157,6 +158,7 @@ de nós de execução (\textit{Action} e \textit{Condition}).
 A Tabela \ref{tab:bt_nodes} mostra os símbolos utilizados para representar
 os nós de uma árvore de comportamento.
 
+% LTeX: enable=false
 \begin{table}[htb]
     \begin{center}
         \caption{Símbolos dos nós de uma árvore de comportamento.}
@@ -175,8 +177,8 @@ os nós de uma árvore de comportamento.
     \end{center}
     {\sourcecitation{Elaborado pelo autor}}
 \end{table}
+% LTeX: enable=true
 
-%TODO: reescrever essa parte
 O resultado dos nós de controle dependem dos resultados de seus nós filhos.
 Por exemplo, o nó \textit{Sequence} executa seus filhos em ordem até encontrar um
 nó que retorna \textit{failure} ou \textit{running}.
@@ -194,14 +196,27 @@ Enquanto a tarefa está sendo executada, o nó retorna \textit{running}.
 Finalmente, o nó \textit{Condition} testa uma condição e retorna \textit{success} ou \textit{failure}
 caso a condição	seja verdadeira ou falsa, respectivamente.
 
+Estes nós podem ser combinados para facilmente criar comportamentos
+empregues em robôs, como mostra a Figura \ref{fig:bt_exemplo}.
+Esta BT descreve a operação de \textit{pick-and-place} de um robô manipulador móvel,
+utilizando os nós \textit{Fallback}, \textit{Condition},
+\textit{Sequence} e \textit{Action}.
 
-    %Além de seu uso na indústria de jogos, árvores de comportamento também são utilizadas
-    %em projetos de robótica, como o robô JIBO ou
-    %o projeto iQmatic da Scania, que utiliza árvores de comportamento no sistema de navegação
-    %caminhões autônomos~\cite{BehaviorTree}.
-    %Além disso, árvores de comportamento são uma peça fundamental do pacote de navegação
-    %\textit{Navigation2} do ROS 2.
-    { \color{red} colocar um exemplo de uma árvore de comportamento }
+\begin{figure}[htbp]
+    {
+        \centering
+        \caption{Exemplo de árvore de comportamento de um robô manipulador móvel.}
+        \label{fig:bt_exemplo}
+        \includegraphics[width=0.5\textwidth]{bt_exemplo.png}\\
+    }
+    {\sourcecitation{\textcite{BehaviorTree}}}
+\end{figure}
+
+Como permitem a construção destes comportamentos de forma visual, sem a
+necessidade de programação, árvores de comportamento são utilizadas em
+projetos de robótica, como o robô JIBO, o projeto iQmatic da Scania, que
+utiliza árvores de comportamento no sistema de navegação de caminhões
+autônomos~\cite{BehaviorTree}.
 
 \section{Mapeamento}
 
@@ -215,20 +230,21 @@ O mapeamento também auxilia na localização do robô, comparando o mapa constr
 com os dados dos sensores em tempo real. Além disso, os dados dos sensores podem ser
 utilizados para atualizar o mapa de custo, em casos de ambientes pouco conhecidos ou dinâmicos.
 
-É possível utilizar os dados de localização e dos sensores para construir um novo mapa,
+É possível utilizar os dados de localização e dos sensores para construir um novo mapa.
 Esta técnica é conhecida como \textit{Simultaneous Localization and Mapping~(SLAM)},
 que permite a criação de mapas para ambientes pouco ou não conhecidos.
 
 \subsection{Mapas de custo}
 
 Um mapa de custo é uma representação de ambiente composta por uma
-grade de células que contém um custo, variando de desconhecido, livre,
+grade de células que contém um valor, variando de desconhecido, livre,
 ocupado ou custo inflado.
 
-Em mapas de custo tradicionais, as informações de custo são armazenadas em mapas monolíticos,
+Em mapas de custo tradicionais, seus dados são armazenadas em mapas monolíticos,
 para utilização em planejamento de trajetórias.
 Esta implementação é utilizado com sucesso para caminhos curtos,
-mas pode apresentar dificuldade em lidar com ambientes dinâmicos maiores~\cite{layered_costmaps}.
+mas pode apresentar dificuldade em lidar com ambientes dinâmicos
+maiores~\cite{layered_costmaps}.
 
 Uma solução para este problema são mapas de custo com camadas,
 que separam o processamento dos dados dos mapas de custos em camadas semanticamente distintas.
@@ -264,14 +280,13 @@ Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e RTABMap, que poss
 a câmeras RGB-D e permitem localização pura.
 Em \textcite{VSLAM}, é feita uma comparação entre estes sistemas, mostrando que o
 OpenVSLAM é a técnica mais adequada para maioria dos casos.
-Porém, para ambientes internos com câmeras RGB-D, o RTABMap também teve um bom desempenho.
+Contudo, para ambientes internos com câmeras RGB-D, o RTABMap também teve um bom desempenho.
 Estes sistemas, porém, não são integrados nativamente ao \textit{Navigation2}.
 
-{ \color{red} deveria me aprofundar mais nos sistemas de slam? }
-% CITAR~\cite{SLAMToolbox}
-% TODO: Adicionar o NVIDIA ISAAC ROS e o StellaVSLAM(continuacao do OpenVSLAM
-% nao estao no artigo do VSLAM feito pelo autor do Nav2, mas eles sao mais recentes
-% e mais promissores(os outros nao foram atualizados faz tempo...)
+% TODO: Procurar artigos mais novos sobre VSLAM (o referenciado ta na pagina
+% do nav2, mas parece estar desatualizado...)
+% O NVidia Isaac ROS VSLAM e o StellaROS(parece que é uma continuacao do OpenVSLAM)
+% parecem promissores...
 
 \section{Navigation2}
 
@@ -295,7 +310,7 @@ Na Figura \ref{fig:nav2_arc} é mostrada a arquitetura do Nav2.
 O \textit{Behavior Tree~(BT) Navigator Server} usa uma árvore de comportamento para
 orquestrar as tarefas de navegação, ativando os servidores de controle, planejamento e
 recuperação para navegar.
-Para executar nós de \textit{actions}, normalmente são utilizados
+Para executar nós de \textit{actions}, são normalmente utilizados
 \textit{Action servers} do ROS 2.
 Esta árvore de comportamento pode ser configurada pelo usuário através de um arquivo
 em XML, permitindo a descrição de comportamentos de navegação únicos sem
@@ -312,7 +327,7 @@ de forma segura.
 Na arquitetura pode-se notar a utilização de dois mapas de custo, um local e
 outro global.
 O mapa local, utilizado no servidor do controlador, é utilizado para planejamento a curto
-prazo e prevenção de colisão, enquanto o mapa global, utilizado no servidor de planejamento, é utilizado principalmente
+prazo e prevenção de colisão, enquanto o mapa global, é aplicado no servidor de planejamento, é utilizado principalmente
 para planejamento a longo prazo.
 
 \chapter{Metodologia}
@@ -322,10 +337,10 @@ Neste capítulo será explicado o desenvolvimento do trabalho, descrevendo o
 estado atual do projeto, além de ajustes e adições planejadas para atingir
 os objetivos propostos.
 A maior parte do desenvolvimento do trabalho será realizada no pacote \textit{twil},
-que é composto por diversos pacotes menores, que definem as funcionalidades do robô Twil.
+composto por diversos pacotes menores, que definem as funcionalidades do robô Twil.
 Este pacote tem como dependências pacotes desenvolvidos dentro da UFRGS, além de pacotes de terceiros, como
 ROS 2 e o \textit{Nav2}.
-Todos pacotes modificados neste trabalho estão disponíveis repositório git
+Todos os pacotes modificados neste trabalho estão disponíveis em um repositório git
 no servidor da UFRGS, onde foi criada \textit{branch} para o desenvolvimento
 deste projeto.
 
@@ -363,7 +378,7 @@ A verificação do funcionamento do sistema de navegação será feita em uma si
 em 3D do prédio Centenário da EE-UFRGS.
 Utilizando o \textit{Building Editor} do Gazebo, foi criado um modelo em 3D do prédio,
 tendo como base a planta do 1º andar, mostrada na Figura \ref{fig:planta_centenario}.
-No pacote \textit{ufrgs\_map} está incluido uma representação em formato DWG desta
+No pacote \textit{ufrgs\_map} está incluído uma representação em formato DWG desta
 imagem, para utilização na camada estática do mapa de custo durante a navegação.
 
 \begin{figure}[htbp]
@@ -377,7 +392,7 @@ imagem, para utilização na camada estática do mapa de custo durante a navega�
 \end{figure}
 
 O modelo em 3D, mostrado na Figura \ref{fig:gazebo_centenario}, faz parte do pacote
-\textit{ufrgs\_gazebo}, junto com um arquivo \textit{world} do Gazebo,
+\textit{ufrgs\_gazebo}, com um arquivo \textit{world} do Gazebo,
 para utilizar como ambiente de testes de mapeamento e localização.
 Obstáculos podem ser adicionados durante a simulação, como mesas e cadeiras,
 para testar a capacidade do robô de evitar colisões.
@@ -423,14 +438,14 @@ devem ser realizados ajustes no controlador.
     {\sourcecitation{Autor}}
 \end{figure}
 
-Para melhorar a acurácia da localização, é possível utilizar outras fontes de dados,
+Para melhorar a acurácia da localização, é possível utilizar outras fontes de dados.
 Desta forma, as desvantagens de cada sensor podem ser compensadas pelos outros
 sensores.
 
-Uma opção é utilizar sensores inercias, como o IMU.
-Através de um \textit{plugin} do Gazebo, é possível simular um IMU no robô Twil e,
-utilizando o pacote \textit{robot\_localization}, é possível combinar os dados
-através de um filtro de Kalman.
+Uma opção é utilizar sensores inercias, simulados no Gazebo com o
+\textit{plugin} IMU.
+Para realizar a fusão dos dados, utiliza-se o pacote \textit{robot\_localization},
+que combina os dados através de um filtro de Kalman.
 
 Deve ser implementada também a odometria visual, utilizando a câmera RGB-D.
 A odometria visual utiliza o mapa do ambiente e os dados dos sensores para estimar
@@ -446,8 +461,15 @@ para a utilização destes pacotes.
 
 Os pacotes \textit{ORB-SLAM3} e \textit{OpenVSLAM}, por outro lado, foram
 criados para utilizar câmeras RGB-D, porém não estão integrados ao \textit{Nav2} e,
-devido a recência das técnicas de VSLAM, não são tão robustos quanto os
+devido ao caráter recente das técnicas de VSLAM, estes não são tão robustos quanto os
 pacotes anteriores.
+
+A implementação da odometria visual com a tradicional, deve ser realizada
+para atender os requisitos de transformações necessárias para o
+funcionamento do \textit{Nav2}, descritos pelo padrão
+REP~105~\cite{rep_105}. Resumidamente, é essencial a existência
+de transformadas de \textit{map} para \textit{odom} e
+\textit{odom} para \textit{base\_link}.
 
 \subsection{Mapeamento}
 
@@ -459,7 +481,7 @@ Neste trabalho, serão utilizados os \textit{plugins}: \textit{static\_layer},
 
 A camada estática, do \textit{plugin} \textit{static\_layer},
 é utilizada para representar o mapa estático do ambiente.
-Neste trabalho, será utilizada a planta do 1º andar do prédio Centenário da EE-UFRGS,
+Neste trabalho, será utilizada a planta do 1.º andar do prédio Centenário da EE-UFRGS,
 representada na Figura \ref{fig:planta_centenario}.
 Posteriormente, utilizando sistemas de SLAM, podem ser criados novos mapas
 para utilização nesta camada.
