@@ -50,7 +50,7 @@
 % lista de tabelas
 \listoftables
 % lista de listagens (código fonte)
-\listofcodelist %% doesn't work on overleaf
+%\listofcodelist %% doesn't work on overleaf
 
 % lista de abreviaturas e siglas
 % o parametro deve ser a abreviatura mais longa
@@ -213,8 +213,9 @@ utilizando os nós \textit{Fallback}, \textit{Condition},
 \end{figure}
 
 Como permitem a construção destes comportamentos de forma visual, sem a
-necessidade de programação, árvores de comportamento são utilizadas em
-projetos de robótica, como o robô JIBO, o projeto iQmatic da Scania, que
+necessidade de programação, árvores de comportamento estão sendo cada
+vez mais utilizadas em projetos de robótica. Exemplos de produtos
+reais são o robô JIBO e o projeto iQmatic da Scania, que
 utiliza árvores de comportamento no sistema de navegação de caminhões
 autônomos~\cite{BehaviorTree}.
 
@@ -258,7 +259,7 @@ de mapas de custo.
         \centering
         \caption{Exemplo de configuração de camadas de um mapa de custo.}
         \label{fig:mapa_camadas}
-        \includegraphics[width=0.6\textwidth]{mapa_camadas.png}\\
+        \includegraphics[width=0.5\textwidth]{mapa_camadas.png}\\
     }
     {\sourcecitation{\textcite{layered_costmaps}}}
 \end{figure}
@@ -506,7 +507,7 @@ dos obstáculos, como mostra a Figura~\ref{fig:inflation_layer}.
         \centering
         \caption{Comparação entre curvas de inflação com inclinações baixa e alta.}
         \label{fig:inflation_layer}
-        \includegraphics[width=0.9\textwidth]{inflation_layer.png}\\
+        \includegraphics[width=0.8\textwidth]{inflation_layer.png}\\
     }
     {\sourcecitation{\textcite{ros_tuning_guide}}}
 \end{figure}
@@ -517,24 +518,25 @@ Diversos \textit{plugins} de planejamento de trajetórias estão disponíveis no
 como o \textit{NavFnPlanner}, \textit{Smac Planner 2D}, \textit{Theta Star Planner}.
 Neste trabalho, será utilizado o \textit{NavFnPlanner}, que pode utilizar os algoritmos
 \textit{Dijkstra} ou \textit{A*}.
-Este planejador foi escolhido porquê é o planejador recomendado para robôs circulares.
+Este planejador foi escolhido porque é o planejador recomendado para
+robôs circulares.
 
 \chapter{Conclusão}
 \label{conclusao}
 
-O planejamento realizado neste trabalho evidenciou um ponto essencial na
-utilizou do ROS 2, a sua modularidade.
-Isto permitiu a utilização de diversos pacotes de terceiros, aproveitando
-o trabalho de outros desenvolvedores.
-Além disso, o desenvolvimento do projeto pode ser efetuado gradualmente,
-isolando cada funcionalidade em tópicos distintos, facilitando a comparação
-de resultados de técnicas diferentes, como será feito com os pacotes de SLAM
+O planejamento realizado neste trabalho evidenciou a modularidade do ROS 2,
+que se tornou uma grande vantagem durante o projeto.
+Um exemplo disso é a utilização de diversos pacotes de terceiros,
+aproveitando o trabalho de outros desenvolvedores.
+Além disso, o desenvolvimento pôde ser realizado gradualmente,
+isolando cada funcionalidade, facilitando a comparação
+de resultados de técnicas diferentes, como será efetuado com os pacotes de SLAM
 e VSLAM.
 
 Apesar de não constar na metodologia, em caso de resultados satisfatórios,
 o sistema de navegação pode ser aplicado ao robô real, com pequenas
 modificações.
-Além disso, para facilitar a reprodução deste trabalho, pode ser
+Finalmente, para facilitar a reprodução deste trabalho, pode ser
 criada uma imagem Docker com todos os pacotes necessários para a execução do
 projeto, simplificando a instalação e configuração do ambiente.
 
