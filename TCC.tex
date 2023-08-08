@@ -131,7 +131,7 @@ e outros nós podem se inscrever para receber essa mensagem.
 Este padrão de comunicação é utilizado para tarefas de longa duração,
 em que o cliente envia uma requisição e o servidor responde com um \textit{feedback} periódico
 durante a execução, além do resultado da tarefa ao seu término, podendo ser falha ou sucesso.
-Durante a execução, é possível cancelar a tarefa.
+É possível cancelar a tarefa prematuramente.
 
 \textit{Actions} podem ser usados, por exemplo, em tarefas de navegação, em que um \textit{action client}
 envia uma requisição com um ponto de destino para um \textit{action server}
@@ -184,17 +184,18 @@ Por exemplo, o nó \textit{Sequence} executa seus filhos em ordem até encontrar
 nó que retorna \textit{failure} ou \textit{running}.
 Caso não encontre, retorna \textit{success}.
 O nó \textit{Fallback} funciona de forma semelhante porém procura filhos que retornem
-\textit{success} ou \textit{running}, só retornando \textit{Failure} caso contrário.
+\textit{success} ou \textit{running}, só retornando \textit{Failure}, caso contrário.
 O nó \textit{Parallel}, executa todos os filhos em paralelo, com o resultado dependendo
 do estado de execução dos filhos.
 O nó \textit{Decorator} modifica o resultado de um nó filho de acordo com uma regra
 definida pelo usuário.
 
 O nó de execução \textit{Action} executa um comando, e retorna o resultado final deste comando,
-como \textit{sucess} caso o objetivo seja atingido, ou \textit{failure} caso contrário.
+como \textit{sucess} caso o objetivo seja atingido, ou \textit{failure}, caso contrário.
 Enquanto a tarefa está sendo executada, o nó retorna \textit{running}.
-Finalmente, o nó \textit{Condition} testa uma condição e retorna \textit{success} ou \textit{failure}
-caso a condição	seja verdadeira ou falsa, respectivamente.
+Finalmente, o nó \textit{Condition} testa uma condição e retorna
+\textit{success} ou \textit{failure}, se o resultado
+for verdadeiro ou falso, respectivamente.
 
 Estes nós podem ser combinados para facilmente criar comportamentos
 procurados em robôs, como mostra a Figura \ref{fig:bt_exemplo},
@@ -243,7 +244,7 @@ ocupado ou custo inflado.
 
 Em mapas de custo tradicionais, seus dados são armazenadas em mapas monolíticos,
 para utilização em planejamento de trajetórias.
-Esta implementação é utilizado com sucesso para caminhos curtos,
+Esta implementação é utilizada com sucesso para caminhos curtos,
 mas pode apresentar dificuldade em lidar com ambientes dinâmicos
 maiores~\cite{layered_costmaps}.
 
