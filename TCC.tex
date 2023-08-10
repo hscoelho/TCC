@@ -339,8 +339,9 @@ de forma segura.
 
 Na arquitetura pode-se notar a utilização de dois mapas de custo, um local e
 outro global.
-O mapa local, utilizado no servidor do controlador, é utilizado para planejamento a curto
-prazo e prevenção de colisão, enquanto o mapa global, é aplicado no servidor de planejamento, é utilizado principalmente
+O mapa local, utilizado no servidor do controlador, realiza o planejamento
+a curto prazo e prevenção de colisão, enquanto o mapa global,
+aplicado no servidor de planejamento, é usado principalmente
 para planejamento a longo prazo.
 
 \chapter{Metodologia}
@@ -351,8 +352,9 @@ estado atual do projeto, além de ajustes e adições planejadas para atingir
 os objetivos propostos.
 A maior parte do desenvolvimento do trabalho será realizada no pacote \textit{twil},
 composto por diversos pacotes menores, que definem as funcionalidades do robô Twil.
-Este pacote tem como dependências pacotes desenvolvidos dentro da UFRGS, além de pacotes de terceiros, como
-ROS 2 e o \textit{Nav2}.
+Este pacote tem como dependências pacotes desenvolvidos dentro da
+Universidade Federal do Rio Grande do Sul~(UFRGS), além de pacotes de
+terceiros, como ROS 2 e o \textit{Nav2}.
 Todos os pacotes modificados neste trabalho estão disponíveis em um repositório git
 no servidor da UFRGS, onde foi criada \textit{branch} para o desenvolvimento
 deste projeto.
@@ -370,7 +372,7 @@ do Gazebo que simulam os sensores do robô.
 O sensor de percepção presente no Twil é a câmera Intel RealSense D435, que
 é uma câmera RGB-D.
 Para sua utilização é necessária a instalação do pacote
-\textit{realsense-ros}\cite{realsense_ros}, que contém os arquivos de
+\textit{realsense-ros}~\cite{realsense_ros}, que contém os arquivos de
 descrição da câmera, além da definição das mensagens publicadas pela mesma.
 Para a simulação, foi adicionado o \textit{plugin} do Gazebo
 \textit{camera\_plugin} ao arquivo de descrição do robô.
@@ -389,7 +391,7 @@ durante a navegação.
 \section{Ambiente de simulação}
 
 A verificação do funcionamento do sistema de navegação será feita em uma simulação
-em 3D do prédio Centenário da EE-UFRGS.
+em 3D do prédio Centenário da Escola de Engenharia da UFRGS.
 Utilizando o \textit{Building Editor} do Gazebo, foi criado um modelo em 3D do prédio,
 tendo como base a planta do 1º andar, mostrada na Figura \ref{fig:planta_centenario}.
 No pacote \textit{ufrgs\_map} está incluído uma representação em formato DWG desta
@@ -462,7 +464,7 @@ Utilizando o \textit{plugin} IMU do Gazebo, ele pode ser adicionado à descriç�
 do robô, publicando mensagens do tipo \textit{sensor\_msgs/Imu}.
 
 
-Deve ser implementada também a odometria visual, utilizando uma câmera RGB-D.
+Deve ser implementada, também, a odometria visual, utilizando uma câmera RGB-D.
 A odometria visual utiliza o mapa do ambiente e os dados dos sensores para estimar
 a posição do robô.
 Os pacotes \textit{nav2\_amcl}, \textit{slam\_toolbox}, \textit{ORB-SLAM3}
@@ -495,7 +497,7 @@ Neste trabalho, serão utilizadas as camadas: \textit{static\_layer},
 \textit{voxel\_layer}, \textit{obstacle\_layer} e \textit{inflation\_layer},
 implementadas através de \textit{plugins} do \textit{Nav2}.
 
-A camada estática, do \textit{plugin} \textit{static\_layer},
+A camada estática, gerada pelo \textit{plugin} \textit{static\_layer},
 é utilizada para representar o mapa fixo do ambiente.
 Neste trabalho, será utilizada a planta do 1.º andar do prédio Centenário da EE-UFRGS,
 representada na Figura \ref{fig:planta_centenario}.
@@ -531,13 +533,13 @@ dos obstáculos, como mostra a Figura~\ref{fig:inflation_layer}.
 
 \subsection{Planejamento de trajetórias}
 
-Finalmente, é necssário configurar o planejamento de trajetórias.
+Finalmente, é necessário configurar o planejamento de trajetórias.
 Diversos \textit{plugins}  estão disponíveis no \textit{Nav2},
-como o \textit{NavFnPlanner}, \textit{Smac Planner 2D}, \textit{Theta Star Planner}.
-Neste trabalho, será utilizado o \textit{NavFnPlanner}, que pode utilizar
+como o \textit{NavFnPlanner}, \textit{Smac Planner 2D} e \textit{Theta Star Planner}.
+Neste trabalho, foi escolhido o \textit{NavFnPlanner}, que pode utilizar
 os algoritmos \textit{Dijkstra} ou \textit{A*}.
-Este planejador foi escolhido porque é o planejador recomendado para
-robôs circulares.
+Este planejador é o planejador recomendado pelos autores do \textit{Navigation 2}
+para robôs circulares.
 
 \chapter{Conclusão}
 \label{conclusao}
