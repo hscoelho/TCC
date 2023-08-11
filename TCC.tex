@@ -37,10 +37,10 @@
     sistema de navegação autônomo, com intuito de permitir
     o planejamento de trajetórias em um ambiente dinâmico ou
     pouco estruturado.
-    Para obter este objetivo, será utilizado o ROS 2 em conjunto com o
-    \textit{Navigation 2}, que será configurado para simular no Gazebo
-    o robô móvel Twil, equipado de uma câmera RGB-D para mapeamento e
-    localização.
+    Para obter este objetivo, será utilizado o Robot Operating System~(ROS) 2
+    em conjunto com o \textit{Navigation 2}, que será configurado para
+    simular no Gazebo o robô móvel Twil, equipado com uma câmera
+    de profundidade para mapeamento e localização.
     Após a verificação do sistema no ambiente simulado, será feita a
     adaptação para o robô real.
 \end{abstract}
@@ -66,10 +66,10 @@
 % lista de abreviaturas e siglas
 % o parametro deve ser a abreviatura mais longa
 \begin{listofabbrv}{PPGEE}
-    \item[BT] Behavior Tree
-    \item[RGB-D] Red Green Blue - Depth (vermelho verde azul - profundidade)
-    \item[ROS] Robot Operating System
-    \item[SLAM] Simultaneous Localization and Mapping
+    \item[BT] \textit{Behavior Tree} (árvore de Comportamento)
+    \item[RGB-D] \textit{Red Green Blue - Depth} (vermelho verde azul - profundidade)
+    \item[ROS] Robot Operating System (sistema operacional de robôs)
+    \item[SLAM] \textit{Simultaneous Localization and Mapping} (localização e mapeamento simultâneos)
     \item[UFRGS] Universidade Federal do Rio Grande do Sul
 \end{listofabbrv}
 
@@ -88,15 +88,14 @@ pela planta, limitando suas tarefas a um espaço fixo.
 Um robô móvel, por outro lado, é capaz de se mover pelo seu ambiente de
 trabalho, aumentando a gama de tarefas que podem ser realizadas.
 
-Por esta razão, o mercado de robôs móveis está em crescimento, como mostra a
+O mercado desta categoria de robô está em crescimento, como mostra a
 Figura~\ref{fig:mercado_robo}.
 Estes robôs podem ser utilizados em ambientes internos, como hospitais, fábricas
 ou em centros de distribuição, como o robô Proteus, da Amazon~\cite{amazon_robot}.
-Esta categoria de robôs, porém, tem como desafio a navegação em ambientes dinâmicos,
-muitas vezes compartilhados com humanos.
-Portanto, é necessário um robô capaz de perceber seu ambiente e replanejar sua
-trajetória em tempo real, de modo a evitar colisões.
-%TODO: nao repetir tanto robos
+Eles tem como desafio a navegação em ambientes dinâmicos, muitas vezes
+compartilhados com humanos. Portanto, é necessária a capacidade
+de perceber seu ambiente e replanejar sua trajetória em tempo real,
+de modo a evitar colisões.
 
 \begin{figure}[htbp]
     {
@@ -105,19 +104,24 @@ trajetória em tempo real, de modo a evitar colisões.
         \label{fig:mercado_robo}
         \includegraphics[width=0.9\textwidth]{mercado_robo}\\
     }
-    {\sourcecitation{\textcite{robot_market}}}
+    {\sourcecitation{\textcite{robot_market}.}}
 \end{figure}
 
 É neste contexto que se insere o projeto atual.
 Utilizando o robô Twil, é proposto um sistema de navegação autônomo que utiliza
-sensores de percepção além de algoritmos de planejamento de trajetórias para
-navegar em ambientes dinâmicos ou pouco conhecidos.
+sensores para mapear o ambiente em conjunto com algoritmos de planejamento
+de trajetórias para permitir a navegação sem colisões em ambientes previamente
+desconhecidos ou dinâmicos.
 
 Este robô já foi utilizado em trabalhos anteriores de conclusão de curso,
 como em \textcite{petry_tcc} e \textcite{rahul_tcc}.
-Porém, devido ao avanço do campo de robótica móvel, novas ferramentas
-foram desenvolvidas, como o ROS 2 e o \textit{Navigation2}, que utilizam
+Porém, devido ao avanço do campo da robótica, ferramentas utilizadas
+nestes trabalhos foram substituídas por novas versões, que implementam
 técnicas modernas que serão abordadas ao longo deste trabalho.
+É o caso do ROS 2, sucessor do ROS 1, que é uma coleção de bibliotecas e
+ferramentas para desenvolvimento de robôs, e do \textit{Navigation 2}, um
+pacote para implementar navegação autônoma em robôs móveis, que substituí o
+\textit{Navigation Stack} do ROS 1.
 
 \chapter{Revisão da Literatura}
 \label{revisao}
@@ -128,27 +132,31 @@ O ROS 2 é a segunda geração do Robot Operating System,
 um \textit{framework} para desenvolvimento de robôs.
 Ele foi desenvolvido a partir do zero para atender as necessidades de robôs modernos,
 com suporte para customização extensiva.
-É baseado no padrão Data Distribution Service~(DDS), que é um padrão de comunicação utilizado
-em sistemas de infraestrutura crítica, como sistemas militares e financeiros~\cite{ROS2Article}.
+A implementação do \textit{middleware} \textit{Data Distribution Service}~(DDS),
+que também é utilizado em sistemas de infraestrutura crítica, como aplicações militares,
+aeroespaciais e financeiras, lhe confere ótima segurança e suporte para comunicação em
+tempo real~\cite{ROS2Article}.
 
-Uma mudança relevante a este trabalho do ROS 2 é nos padrões de comunicação.
+Um assunto relevante a este trabalho são os padrões de comunicação do ROS 2.
 Existem três tipos de comunicação no ROS 2: \textit{topics}, \textit{services} e \textit{actions}.
 \textit{Topics} são canais de comunicação unidirecionais, em que um nó publica uma mensagem
 e outros nós podem se inscrever para receber essa mensagem.
 \textit{Services} funcionam de forma cliente servidor, utilizando o padrão de requisição e resposta.
-\textit{Topics} e \textit{services} já existiam no ROS 1.
 
-\textit{Actions}, por outro lado, são únicos ao ROS 2.
-Este padrão de comunicação é utilizado para tarefas de longa duração,
-em que o cliente envia uma requisição e o servidor responde com um \textit{feedback} periódico
-durante a execução, além do resultado da tarefa ao seu término, podendo ser falha ou sucesso.
-É possível cancelar a tarefa prematuramente.
+\textit{Actions}, são utilizados para tarefas de longa duração, com possibilidade de
+cancelamento prematuro.
+O cliente começa a execução enviando uma requisição para o servidor,
+que response periodicamente com o estado atual da tarefa.
+No término, é enviado o resultado, podendo ser sucesso ou falha.
 
-\textit{Actions} podem ser usados, por exemplo, em tarefas de navegação, em que um \textit{action client}
+No ROS 1, \textit{actions} eram implementados em uma biblioteca separada, mas,
+devido a sua importância no \textit{navigation stack} do ROS 1 e no pacote
+\texttt{MoveIt!}, têm suporte nativo no ROS 2~\cite{actions}.
+Um exemplo de uso é uma tarefa de navegação em que um \textit{action client}
 envia uma requisição com um ponto de destino para um \textit{action server}
-que responde com um \textit{feedback} contínuo da posição atual do robô e
-com o resultado final.
-Sua definição a torna apropriada na utilização em árvores de comportamento.
+que responde com realimentação contínua da posição atual do robô e
+com o resultado ao finalizar a tarefa.
+Eles também são apropriados para utilização em árvores de comportamento.
 
 \section{Árvores de comportamento}
 
@@ -221,7 +229,7 @@ utilizando os nós \textit{Fallback}, \textit{Condition},
         \label{fig:bt_exemplo}
         \includegraphics[width=0.5\textwidth]{bt_exemplo.png}\\
     }
-    {\sourcecitation{\textcite{BehaviorTree}}}
+    {\sourcecitation{\textcite{BehaviorTree}.}}
 \end{figure}
 
 Como permitem a construção destes comportamentos de forma visual, sem a
@@ -273,7 +281,7 @@ de mapas de custo.
         \label{fig:mapa_camadas}
         \includegraphics[width=0.5\textwidth]{mapa_camadas.png}\\
     }
-    {\sourcecitation{\textcite{layered_costmaps}}}
+    {\sourcecitation{\textcite{layered_costmaps}.}}
 \end{figure}
 
 \subsection{Sensores e SLAM}
@@ -283,12 +291,13 @@ pois afeta a qualidade e quantidade de informações obtidas pelo robô, além
 de determinar a escolha das ferramentas utilizadas para o mapeamento do
 ambiente~\cite{SensorAndSLAM}.
 
-Sensores acústicos, como sonares e sensor de distância a laser, são utilizados
+Sensores acústicos, como sonares e sensor de distância a \textit{laser}, são utilizados
 em ferramentas SLAM 2D tradicionais. Estes sistemas são robustos e bem estabelecidos,
 com fácil integração ao sistema de navegação do ROS 2.
 
-Porém, com o avanço da tecnologia, sensores RGB-D e câmeras estéreo estão se tornando
-mais acessíveis, influenciando o desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
+Porém, com o avanço da tecnologia, sensores Red Green Blue - Depth~(RGB-D)
+e câmeras estéreo estão se tornando mais acessíveis, influenciando o
+desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
 Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e RTABMap, que possuem suporte
 a câmeras RGB-D e permitem localização pura.
 Em \textcite{VSLAM}, é feita uma comparação entre estes sistemas, mostrando que o
@@ -312,11 +321,11 @@ ambientes dinâmicos com suporte a uma maior variedade de sensores~\cite{Nav2}.
 \begin{figure}[htbp]
     {
         \centering
-        \caption{Arquitetura do \textit{Navigation2}}.
+        \caption{Arquitetura do \textit{Navigation2}.}
         \label{fig:nav2_arc}
         \includegraphics[width=0.9\textwidth]{nav2_architecture.png}\\
     }
-    {\sourcecitation{\textcite{nav2_site}}}
+    {\sourcecitation{\textcite{nav2_site}.}}
 \end{figure}
 
 Na Figura \ref{fig:nav2_arc} é mostrada a arquitetura do Nav2.
@@ -350,18 +359,18 @@ para planejamento a longo prazo.
 Neste capítulo será explicado o desenvolvimento do trabalho, descrevendo o
 estado atual do projeto, além de ajustes e adições planejadas para atingir
 os objetivos propostos.
-A maior parte do desenvolvimento do trabalho será realizada no pacote \textit{twil},
+A maior parte do desenvolvimento do trabalho será realizada no pacote \texttt{twil},
 composto por diversos pacotes menores, que definem as funcionalidades do robô Twil.
 Este pacote tem como dependências pacotes desenvolvidos dentro da
 Universidade Federal do Rio Grande do Sul~(UFRGS), além de pacotes de
-terceiros, como ROS 2 e o \textit{Nav2}.
+terceiros, como ROS 2 e o Nav2.
 Todos os pacotes modificados neste trabalho estão disponíveis em um repositório git
-no servidor da UFRGS, onde foi criada \textit{branch} para o desenvolvimento
-deste projeto.
+no servidor do Laboratório de Robótica da UFRGS, onde foi criada uma
+\textit{branch} para o desenvolvimento deste projeto.
 
 \section{Configuração do robô}
 
-O modelo do robô está descrito no pacote \textit{twil\_description}, que contém
+O modelo do robô está descrito no pacote \texttt{twil\_description}, que contém
 os arquivos de descrição do robô no formato XACRO, que é compilado para o formato
 URDF, utilizado pelo ROS 2.
 A utilização do XACRO permite a criação de parâmetros, que são utilizados nos
@@ -369,23 +378,26 @@ arquivos de \textit{launch} para habilitar e desabilitar partes do robô.
 Além da representação física, nestes arquivos são incluídos \textit{plugins}
 do Gazebo que simulam os sensores do robô.
 
-O sensor de percepção presente no Twil é a câmera Intel RealSense D435, que
-é uma câmera RGB-D.
+O Twil está equipado com a câmera RGB-D Intel RealSense D435.
 Para sua utilização é necessária a instalação do pacote
-\textit{realsense-ros}~\cite{realsense_ros}, que contém os arquivos de
+\texttt{realsense-ros}~\cite{realsense_ros}, que contém os arquivos de
 descrição da câmera, além da definição das mensagens publicadas pela mesma.
 Para a simulação, foi adicionado o \textit{plugin} do Gazebo
-\textit{camera\_plugin} ao arquivo de descrição do robô.
-Este \textit{plugin} publica mensagens do tipo \textit{sensor\_msgs/PointCLoud2}, que
+\texttt{camera\_plugin} ao arquivo de descrição do robô.
+Este \textit{plugin} publica mensagens do tipo \texttt{sensor\_msgs/PointCLoud2}, que
 serão utilizadas para o mapeamento do ambiente.
 
-A dinâmica do robô é implementada pelo pacote \textit{twil\_bringup},
-que contém arquivos de configuração dos controladores, além de arquivos de
-\textit{launch} para teste.
-Os controladores estão presentes nos pacotes \textit{linearing\_controllers} e
-\textit{non\_smooth\_backstep\_controller}, disponíveis no repositório da UFRGS.
+Outros sensores como sonares, \textit{encoders},
+unidades de medição inercial~(IMU, em inglês), além de outros, estão presentes no
+robô real e podem ser utilizados para auxiliar na navegação.
+
+O pacote \texttt{twil\_bringup}, contém arquivos de configuração dos
+controladores, além de arquivos de \textit{launch} para teste de movimentação
+do robô.
+Os controladores estão presentes nos pacotes \texttt{linearing\_controllers} e
+\texttt{non\_smooth\_backstep\_controller}.
 Estes controladores também são responsáveis pela publicação de
-informações de odometria no tópico \textit{odom}, utilizadas para localização
+informações de odometria no tópico \texttt{/odom}, utilizadas para localização
 durante a navegação.
 
 \section{Ambiente de simulação}
@@ -394,21 +406,21 @@ A verificação do funcionamento do sistema de navegação será feita em uma si
 em 3D do prédio Centenário da Escola de Engenharia da UFRGS.
 Utilizando o \textit{Building Editor} do Gazebo, foi criado um modelo em 3D do prédio,
 tendo como base a planta do 1º andar, mostrada na Figura \ref{fig:planta_centenario}.
-No pacote \textit{ufrgs\_map} está incluído uma representação em formato DWG desta
+No pacote \texttt{ufrgs\_map} está incluído uma representação em formato PGM desta
 imagem, para utilização na camada estática do mapa de custo.
 
 \begin{figure}[htbp]
     {
         \centering
-        \caption{Planta do 1º andar do prédio Centenário da EE-UFRGS}
+        \caption{Planta do 1º andar do prédio Centenário da EE-UFRGS.}
         \label{fig:planta_centenario}
         \includegraphics[width=0.5\textwidth]{centenario_floor_plan.png}\\
     }
-    {\sourcecitation{\textcite{petry_tcc}}}
+    {\sourcecitation{\textcite{petry_tcc}.}}
 \end{figure}
 
 O modelo em 3D, mostrado na Figura \ref{fig:gazebo_centenario}, faz parte do pacote
-\textit{ufrgs\_gazebo}, com um arquivo \textit{world} do Gazebo,
+\texttt{ufrgs\_gazebo}, com um arquivo \textit{world} do Gazebo,
 para utilizar como ambiente de testes de navegação.
 Obstáculos podem ser adicionados durante a simulação, como mesas e cadeiras,
 para testar a capacidade do robô de evitar colisões.
@@ -416,19 +428,19 @@ para testar a capacidade do robô de evitar colisões.
 \begin{figure}[htbp]
     {
         \centering
-        \caption{Ambiente Gazebo com modelo do prédio Centenário da EE-UFRGS}
+        \caption{Ambiente Gazebo com modelo do prédio Centenário da EE-UFRGS.}
         \label{fig:gazebo_centenario}
         \includegraphics[width=0.9\textwidth]{gazebo.png}\\
     }
-    {\sourcecitation{Autor}}
+    {\sourcecitation{Autor.}}
 \end{figure}
 
 \section{Configuração do Nav2}
 
 A navegação será realizada utilizando o \textit{Navigation 2}.
-A movimentação é iniciada com uma mensagem do tipo \textit{NavigateToPose},
-enviada através do RViz.
-O \textit{Nav2} recebe esta mensagem e, utilizando uma árvore de comportamento,
+Através do \textit{software} de visualização de robôs do ROS, o RViz,
+é enviada uma mensagem do tipo \texttt{NavigateToPose}, com o destino desejado.
+O Nav2 recebe esta mensagem e, utilizando uma árvore de comportamento,
 orquestra as tarefas de navegação, ativando os servidores de controle, planejamento
 e recuperação para navegar até o ponto de destino.
 Porém, antes de utilizar este sistema, ele deve ser configurado para o robô Twil.
@@ -437,7 +449,7 @@ Porém, antes de utilizar este sistema, ele deve ser configurado para o robô Tw
 
 Primeiramente, deve ser configurado o sistema de localização do robô.
 Atualmente, está sendo utilizado os dados publicados pelo controlador no
-tópico \textit{odom} para estimar a posição do robô.
+tópico \texttt{/odom} para estimar a posição do robô.
 Na Figura~\ref{fig:robo_rviz} é mostrado o robô Twil no RViz, com a representação
 gráfica da trajetória real, em verde, e a trajetória estimada pelo controlador,
 em vermelho.
@@ -447,73 +459,77 @@ devem ser realizados ajustes nos parâmetros do controlador.
 \begin{figure}[htbp]
     {
         \centering
-        \caption{RViz com o robô Twil no ambiente do prédio Centenário da EE-UFRGS}
+        \caption{RViz com o robô Twil no ambiente do prédio Centenário da EE-UFRGS.}
         \label{fig:robo_rviz}
         \includegraphics[width=0.8\textwidth]{erro_de_odometria.png}\\
     }
-    {\sourcecitation{Autor}}
+    {\sourcecitation{Autor.}}
 \end{figure}
 
 Para melhorar a acurácia da localização, é possível utilizar outras fontes de
-dados e, utilizando o pacote \textit{robot\_localization}, fundir os dados
+dados e, utilizando o pacote \texttt{robot\_localization}, fundir os dados
 através de um filtro de Kalman.
 Desta forma, as desvantagens de cada sensor podem ser compensadas pelos outros
 sensores.
 Sensores inercias são comumente usados para esta finalidade.
 Utilizando o \textit{plugin} IMU do Gazebo, ele pode ser adicionado à descrição
-do robô, publicando mensagens do tipo \textit{sensor\_msgs/Imu}.
+do robô, publicando mensagens do tipo \texttt{sensor\_msgs/Imu}.
 
 
 Deve ser implementada, também, a odometria visual, utilizando uma câmera RGB-D.
 A odometria visual utiliza o mapa do ambiente e os dados dos sensores para estimar
 a posição do robô.
-Os pacotes \textit{nav2\_amcl}, \textit{slam\_toolbox}, \textit{ORB-SLAM3}
-e \textit{OpenVSLAM} são capazes de realizar esta funcionalidade.
-Os dois primeiros estão integrados ao \textit{Nav2},
+Os pacotes \texttt{nav2\_amcl}, \texttt{slam\_toolbox}, \texttt{ORB-SLAM3}
+e \texttt{OpenVSLAM} são capazes de realizar esta funcionalidade.
+Os dois primeiros estão integrados ao Nav2,
 porém foram criados para utilizar sensores LIDAR e, portanto,
-necessitam de mensagens do tipo \textit{LaserScan}.
-A câmera RGB-D, por outro lado, publica mensagens do tipo \textit{PointCloud2},
-logo, é necessário converter estas mensagens para o tipo \textit{LaserScan}
+necessitam de mensagens do tipo \texttt{LaserScan}.
+A câmera RGB-D, por outro lado, publica mensagens do tipo \texttt{PointCloud2},
+logo, é necessário converter estas mensagens para o tipo \texttt{LaserScan}
 para a utilização destes pacotes.
 
-Em contrapartida, os pacotes \textit{ORB-SLAM3} e \textit{OpenVSLAM} foram
+Em contrapartida, os pacotes \texttt{ORB-SLAM3} e \texttt{OpenVSLAM} foram
 criados para utilizar câmeras RGB-D. Entretanto, estes sistemas não estão
-integrados ao \textit{Nav2} e, devido ao caráter recente das técnicas de
+integrados ao Nav2 e, devido ao caráter recente das técnicas de
 VSLAM, não são tão robustos quanto os pacotes anteriores.
 Desta forma, serão implementados ambos sistemas, para que seja possível
 comparar os resultados de cada um.
 
-A publicação dos dados de odometria deve seguir a norma de sistema de coordenadas
-REP~105~\cite{rep_105}, utilizada pelo \textit{Nav2}.
-Resumidamente, esta norma exige a existência de transformadas de \textit{map}
-para \textit{odom} e \textit{odom} para \textit{base\_link}.
+A localização seguirá a norma REP~105~\cite{rep_105}, utilizada pelo Nav2.
+Ela define três sistemas de coordenadas: \texttt{map} e \texttt{odom}, fixos ao
+ambiente e o \texttt{base\_link}, fixo a base do robô.
+A pose do robô em relação ao \texttt{odom}, deve ser contínua, porém pode
+divergir gradualmente, enquanto a pose do robô em relação ao
+\texttt{map} deve ser precisa, mas não é contínua.
+Logo, o \texttt{odom} é utilizado para referência local a curto prazo e o
+\texttt{map} é utilizado para referência global a longo prazo.
 
 \subsection{Mapeamento}
 
-A representação do ambiente no \textit{Nav2} é feita através de um mapa de custo.
+A representação do ambiente no Nav2 é feita através de um mapa de custo.
 As camadas do mapa são definidas através de \textit{plugins} que permitem
 diversas fontes de dados para a construção do mapa.
-Neste trabalho, serão utilizadas as camadas: \textit{static\_layer},
-\textit{voxel\_layer}, \textit{obstacle\_layer} e \textit{inflation\_layer},
-implementadas através de \textit{plugins} do \textit{Nav2}.
+Neste trabalho, serão utilizadas as camadas: \texttt{static\_layer},
+\texttt{voxel\_layer}, \texttt{obstacle\_layer} e \texttt{inflation\_layer},
+implementadas através de \textit{plugins} do Nav2.
 
-A camada estática, gerada pelo \textit{plugin} \textit{static\_layer},
+A camada estática, gerada pelo \textit{plugin} \texttt{static\_layer},
 é utilizada para representar o mapa fixo do ambiente.
 Neste trabalho, será utilizada a planta do 1.º andar do prédio Centenário da EE-UFRGS,
 representada na Figura \ref{fig:planta_centenario}.
 Posteriormente, utilizando sistemas de SLAM, podem ser criados mapas atualizados
 para utilização nesta camada.
 
-As camadas \textit{voxel\_layer} e \textit{obstacle\_layer} utilizam dados dos
-sensores de percepção para atualizar dinamicamente o mapa.
-A diferença entre estas camadas é que a \textit{voxel\_layer} utiliza dados 3D
-ao invés de 2D, como a \textit{obstacle\_layer}. Ambas podem utilizar mensagens
-do tipo \textit{PointCloud2}, então não será necessária a conversão dos
+As camadas \texttt{voxel\_layer} e \texttt{obstacle\_layer} utilizam dados dos
+sensores para atualizar dinamicamente o mapa.
+A diferença entre estas camadas é que a \texttt{voxel\_layer} utiliza dados 3D
+ao invés de 2D, como a \texttt{obstacle\_layer}. Ambas podem utilizar mensagens
+do tipo \texttt{PointCloud2}, então não será necessária a conversão dos
 dados provenientes da câmera RGB-D.
 A inclusão destas camadas é fundamental para evitar colisões com obstáculos
 ausentes no mapa estático.
 
-A última camada, \textit{inflation\_layer}, cria uma zona de segurança ao redor
+A última camada, \texttt{inflation\_layer}, cria uma zona de segurança ao redor
 dos objetos captados nas outras camadas, para garantir uma distância segura
 ao planejar a trajetória.
 Em \textcite{ros_tuning_guide}, recomenda-se que a curva de inflação tenha uma
@@ -528,16 +544,16 @@ dos obstáculos, como mostra a Figura~\ref{fig:inflation_layer}.
         \label{fig:inflation_layer}
         \includegraphics[width=0.8\textwidth]{inflation_layer.png}\\
     }
-    {\sourcecitation{\textcite{ros_tuning_guide}}}
+    {\sourcecitation{\textcite{ros_tuning_guide}}.}
 \end{figure}
 
 \subsection{Planejamento de trajetórias}
 
 Finalmente, é necessário configurar o planejamento de trajetórias.
-Diversos \textit{plugins}  estão disponíveis no \textit{Nav2},
-como o \textit{NavFnPlanner}, \textit{Smac Planner 2D} e \textit{Theta Star Planner}.
-Neste trabalho, foi escolhido o \textit{NavFnPlanner}, que pode utilizar
-os algoritmos \textit{Dijkstra} ou \textit{A*}. % TODO: ADICIONAR AS CITATIONS DO DIJKSTRA e A STAR AQUI
+Diversos \textit{plugins}  estão disponíveis no Nav2,
+como o \texttt{NavFnPlanner}, \texttt{Smac Planner 2D} e \texttt{Theta Star Planner}.
+Neste trabalho, foi escolhido o \texttt{NavFnPlanner}, que pode utilizar
+os algoritmos Dijkstra~\cite{dijkstra} ou A*~\cite{astar}.
 Este é o planejador recomendado pelos autores do \textit{Navigation 2}
 para robôs circulares.
 
@@ -557,9 +573,9 @@ e VSLAM.
 Apesar de não constar na metodologia, em caso de resultados satisfatórios,
 o sistema de navegação pode ser aplicado ao robô real, com pequenas
 modificações.
-Finalmente, para facilitar a reprodução deste trabalho, pode ser
-criada uma imagem Docker com todos os pacotes necessários para a execução do
-projeto, simplificando a instalação e configuração do ambiente.
+Finalmente, para facilitar a reprodução dos resultados deste trabalho,
+pode ser criada uma imagem Docker com todos os pacotes necessários para
+a execução do projeto, simplificando a instalação e configuração do ambiente.
 
 
 \printbibliography
