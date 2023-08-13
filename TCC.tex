@@ -81,6 +81,7 @@
 
 \chapter{Introdução}
 
+% TODO: Dizer mais explicitamente vai ser feito e dar uma introdução dos próximos capítulos(1 frase)
 Robótica deve seu maior sucesso a indústria de manufatura, onde são utilizados
 principalmente robôs manipuladores~\cite{IntroductionToMobileRobots}.
 Porém, estes robôs têm como limitação sua mobilidade, incapazes de se movimentar
@@ -136,18 +137,30 @@ A implementação do \textit{middleware} \textit{Data Distribution Service}~(DDS
 que também é utilizado em sistemas de infraestrutura crítica, como aplicações militares,
 aeroespaciais e financeiras, lhe confere ótima segurança e suporte para comunicação em
 tempo real~\cite{ROS2Article}.
+% TODO: Arrumar/(retirar?) essa parte do DDS.
+% "A parte da DDS continua com problemas. O RoS 2 não implementa a DDS. Ele
+% simlesmente usa a DDS como midleware."
 
 Um assunto relevante a este trabalho são os padrões de comunicação do ROS 2.
 Existem três tipos de comunicação no ROS 2: \textit{topics}, \textit{services} e \textit{actions}.
 \textit{Topics} são canais de comunicação unidirecionais, em que um nó publica uma mensagem
 e outros nós podem se inscrever para receber essa mensagem.
 \textit{Services} funcionam de forma cliente servidor, utilizando o padrão de requisição e resposta.
+% TODO: Explicar que tópics são pub/sub e serviços são um mecanismo do tipo remote
+% procedure call (RPC).
 
 \textit{Actions}, são utilizados para tarefas de longa duração, com possibilidade de
 cancelamento prematuro.
 O cliente começa a execução enviando uma requisição para o servidor,
 que response periodicamente com o estado atual da tarefa.
 No término, é enviado o resultado, podendo ser sucesso ou falha.
+
+% TODO: Arrumar toda essa seção.
+% 4) Tanto no ROS 1 quanto no ROS 2 as ações são implementadas em uma
+% biblioteca própria (como quase todas as outras funcionalidades). E não
+% são usados pelo Navigation 2 e pelo MoveiT!. Não mistura a explicação das
+% ações com explicações sobre o Navigation 2 ou MoveIt. São coisas
+% independentes, que até podem ser usadas juntas, mas são independentes.
 
 No ROS 1, \textit{actions} eram implementados em uma biblioteca separada, mas,
 devido a sua importância no \textit{navigation stack} do ROS 1 e no pacote
@@ -446,6 +459,18 @@ e recuperação para navegar até o ponto de destino.
 Porém, antes de utilizar este sistema, ele deve ser configurado para o robô Twil.
 
 \subsection{Localização}
+
+% TODO: Incluir o pacote e e msg quando é falado sobre tipo de msg
+% Na seção 3.3.1 (e nas outras) quando falas de tipos de mensgens, tens
+% que incluir o pacote e o msg. oU seja usar algo como
+% sensor_msgs/msg/JointState. Podem existir mensagens com o mesmo nome em
+% pacotes diferentes ou como serviços.
+% TODO: explicar o seguinte:
+% Faltou explicar que odometria deve publicar a pose de base_link em
+% relação a odom e que a localização deve publicar a pose de odom em
+% relação a map. Tira a parte onde afirmas que odom deve ser usado como
+% referência loca para curto prazo e map como referência global para longo
+% prazo. A coisa é mais complicada do que isso.
 
 Primeiramente, deve ser configurado o sistema de localização do robô.
 Atualmente, está sendo utilizado os dados publicados pelo controlador no
