@@ -81,14 +81,14 @@
 
 \chapter{Introdução}
 
-% TODO: Dizer mais explicitamente vai ser feito e dar uma introdução dos próximos capítulos(1 frase)
-Robótica deve seu maior sucesso a indústria de manufatura, onde são utilizados
+A robótica deve seu maior sucesso à indústria de manufatura, onde são utilizados
 principalmente robôs manipuladores~\cite{IntroductionToMobileRobots}.
-Porém, estes robôs têm como limitação sua mobilidade, incapazes de se movimentar
+Porém, esses robôs têm como limitação sua mobilidade, incapazes de se movimentar
 pela planta, limitando suas tarefas a um espaço fixo.
 Um robô móvel, por outro lado, é capaz de se mover pelo seu ambiente de
 trabalho, aumentando a gama de tarefas que podem ser realizadas.
 
+% rever esta parte: Laranja disse que ficou meio enrolada
 O mercado desta categoria de robô está em crescimento, como mostra a
 Figura~\ref{fig:mercado_robo}.
 Estes robôs podem ser utilizados em ambientes internos, como hospitais, fábricas
@@ -114,18 +114,29 @@ sensores para mapear o ambiente em conjunto com algoritmos de planejamento
 de trajetórias para permitir a navegação sem colisões em ambientes previamente
 desconhecidos ou dinâmicos.
 
-Este robô já foi utilizado em trabalhos anteriores de conclusão de curso,
+Este robô já foi utilizado em trabalhos de conclusão de curso anteriores,
 como em \textcite{petry_tcc} e \textcite{rahul_tcc}.
 Porém, devido ao avanço do campo da robótica, ferramentas utilizadas
-nestes trabalhos foram substituídas por novas versões, que implementam
-técnicas modernas que serão abordadas ao longo deste trabalho.
+nesses trabalhos foram substituídas por novas versões, que implementam
+técnicas modernas que serão abordadas ao longo do trabalho.
 É o caso do ROS 2, sucessor do ROS 1, que é uma coleção de bibliotecas e
 ferramentas para desenvolvimento de robôs, e do \textit{Navigation 2}, um
 pacote para implementar navegação autônoma em robôs móveis, que substituí o
 \textit{Navigation Stack} do ROS 1.
 
+Neste trabalho, será dado seguimento ao desenvolvimento anterior no Twil, com
+ajustes na odometria, além da adição de localização utilizando uma câmera de profundidade
+e mapeamento do ambiente para permitir a navegação autônoma em ambientes dinâmicos.
+Nos capítulos seguintes, é apresentado o embasamento teórico necessário para
+este desenvolvimento, além do planejamento da implementação deste sistema.
+
 \chapter{Revisão da Literatura}
 \label{revisao}
+
+% Laranja sugeriu um texto introdutório aqui...
+Neste capítulo são apresentados os conceitos necessários para o desenvolvimento
+do trabalho, como o Robot Operating System~(ROS) 2, árvores de comportamento, mapeamento
+de ambientes e o \textit{Navigation 2}.
 
 \section{Robot Operating System 2 (ROS 2)}
 
@@ -133,38 +144,25 @@ O ROS 2 é a segunda geração do Robot Operating System,
 um \textit{framework} para desenvolvimento de robôs.
 Ele foi desenvolvido a partir do zero para atender as necessidades de robôs modernos,
 com suporte para customização extensiva.
-A implementação do \textit{middleware} \textit{Data Distribution Service}~(DDS),
+O \textit{Data Distribution Service}~(DDS) é utilizado como o \textit{middleware} de comunicação,
 que também é utilizado em sistemas de infraestrutura crítica, como aplicações militares,
-aeroespaciais e financeiras, lhe confere ótima segurança e suporte para comunicação em
+aeroespaciais e financeiras. Este padrão confere ao ROS ótima segurança e suporte para comunicação em
 tempo real~\cite{ROS2Article}.
-% TODO: Arrumar/(retirar?) essa parte do DDS.
-% "A parte da DDS continua com problemas. O RoS 2 não implementa a DDS. Ele
-% simlesmente usa a DDS como midleware."
 
 Um assunto relevante a este trabalho são os padrões de comunicação do ROS 2.
 Existem três tipos de comunicação no ROS 2: \textit{topics}, \textit{services} e \textit{actions}.
-\textit{Topics} são canais de comunicação unidirecionais, em que um nó publica uma mensagem
-e outros nós podem se inscrever para receber essa mensagem.
-\textit{Services} funcionam de forma cliente servidor, utilizando o padrão de requisição e resposta.
-% TODO: Explicar que tópics são pub/sub e serviços são um mecanismo do tipo remote
-% procedure call (RPC).
+\textit{Topics} são canais de comunicação unidirecionais, em que um nó, chamado de \textit{publisher},
+publica uma mensagem e outros nós, os \textit{subscribers}, podem se inscrever no tópico publicado
+para receber essa mensagem.
+\textit{Services} são um mecanismo do tipo \textit{remote procedure call}~(RPC),
+em que um nó faz uma chamada a outro nó que executa uma computação e retorna um resultado,
+funcionando como um cliente e um servidor.
 
 \textit{Actions}, são utilizados para tarefas de longa duração, com possibilidade de
 cancelamento prematuro.
 O cliente começa a execução enviando uma requisição para o servidor,
 que response periodicamente com o estado atual da tarefa.
 No término, é enviado o resultado, podendo ser sucesso ou falha.
-
-% TODO: Arrumar toda essa seção.
-% 4) Tanto no ROS 1 quanto no ROS 2 as ações são implementadas em uma
-% biblioteca própria (como quase todas as outras funcionalidades). E não
-% são usados pelo Navigation 2 e pelo MoveiT!. Não mistura a explicação das
-% ações com explicações sobre o Navigation 2 ou MoveIt. São coisas
-% independentes, que até podem ser usadas juntas, mas são independentes.
-
-No ROS 1, \textit{actions} eram implementados em uma biblioteca separada, mas,
-devido a sua importância no \textit{navigation stack} do ROS 1 e no pacote
-\texttt{MoveIt!}, têm suporte nativo no ROS 2~\cite{actions}.
 Um exemplo de uso é uma tarefa de navegação em que um \textit{action client}
 envia uma requisição com um ponto de destino para um \textit{action server}
 que responde com realimentação contínua da posição atual do robô e
@@ -280,6 +278,7 @@ Esta implementação é utilizada com sucesso para caminhos curtos,
 mas pode apresentar dificuldade em lidar com ambientes dinâmicos
 maiores~\cite{layered_costmaps}.
 
+% Laranja pediu referencias para esta parte
 Uma solução para este problema são mapas de custo com camadas,
 que separam o processamento dos dados dos mapas de custos em camadas semanticamente distintas.
 Por exemplo, os dados dos sensores e o mapa estático previamente conhecido são processados
@@ -292,9 +291,9 @@ de mapas de custo.
         \centering
         \caption{Exemplo de configuração de camadas de um mapa de custo.}
         \label{fig:mapa_camadas}
-        \includegraphics[width=0.5\textwidth]{mapa_camadas.png}\\
+        \includegraphics[width=0.5\textwidth]{mapa_camadas_trad.png}\\
     }
-    {\sourcecitation{\textcite{layered_costmaps}.}}
+    {\sourcecitation{\textcite{layered_costmaps}.}} %colocar que é traduzido?
 \end{figure}
 
 \subsection{Sensores e SLAM}
@@ -304,7 +303,7 @@ pois afeta a qualidade e quantidade de informações obtidas pelo robô, além
 de determinar a escolha das ferramentas utilizadas para o mapeamento do
 ambiente~\cite{SensorAndSLAM}.
 
-Sensores acústicos, como sonares e sensor de distância a \textit{laser}, são utilizados
+Sensores acústicos, como sonares e sensor de óticos, são utilizados
 em ferramentas SLAM 2D tradicionais. Estes sistemas são robustos e bem estabelecidos,
 com fácil integração ao sistema de navegação do ROS 2.
 
@@ -331,14 +330,15 @@ Baseando-se no legado do \textit{navigation stack} do ROS 1, o Nav2 foi constru�
 do ROS2, implementando técnicas mais modernas para ter um sistema modular propício para
 ambientes dinâmicos com suporte a uma maior variedade de sensores~\cite{Nav2}.
 
+% escrever mais sobre essa imagem. no trabalho ela ficou numa página sozinha, o que ficou meio estranho
 \begin{figure}[htbp]
     {
         \centering
         \caption{Arquitetura do \textit{Navigation2}.}
         \label{fig:nav2_arc}
-        \includegraphics[width=0.9\textwidth]{nav2_architecture.png}\\
+        \includegraphics[width=0.9\textwidth]{nav2_architecture_trad.png}\\
     }
-    {\sourcecitation{\textcite{nav2_site}.}}
+    {\sourcecitation{\textcite{nav2_site}.}} % colocar adaptado/traduzido?
 \end{figure}
 
 Na Figura \ref{fig:nav2_arc} é mostrada a arquitetura do Nav2.
@@ -369,7 +369,7 @@ para planejamento a longo prazo.
 \chapter{Metodologia}
 \label{desenvolvimento}
 
-Neste capítulo será explicado o desenvolvimento do trabalho, descrevendo o
+Neste capítulo é explicado o desenvolvimento do trabalho, descrevendo o
 estado atual do projeto, além de ajustes e adições planejadas para atingir
 os objetivos propostos.
 A maior parte do desenvolvimento do trabalho será realizada no pacote \texttt{twil},
@@ -378,8 +378,9 @@ Este pacote tem como dependências pacotes desenvolvidos dentro da
 Universidade Federal do Rio Grande do Sul~(UFRGS), além de pacotes de
 terceiros, como ROS 2 e o Nav2.
 Todos os pacotes modificados neste trabalho estão disponíveis em um repositório git
-no servidor do Laboratório de Robótica da UFRGS, onde foi criada uma
-\textit{branch} para o desenvolvimento deste projeto.
+no servidor do Laboratório de Robótica da UFRGS, onde foi criada um
+ramo para o desenvolvimento deste projeto.
+
 
 \section{Configuração do robô}
 
@@ -397,7 +398,7 @@ Para sua utilização é necessária a instalação do pacote
 descrição da câmera, além da definição das mensagens publicadas pela mesma.
 Para a simulação, foi adicionado o \textit{plugin} do Gazebo
 \texttt{camera\_plugin} ao arquivo de descrição do robô.
-Este \textit{plugin} publica mensagens do tipo \texttt{sensor\_msgs/PointCLoud2}, que
+Este \textit{plugin} publica mensagens do tipo \texttt{sensor\_msgs/PointCloud2}, que
 serão utilizadas para o mapeamento do ambiente.
 
 Outros sensores como sonares, \textit{encoders},
@@ -458,22 +459,18 @@ orquestra as tarefas de navegação, ativando os servidores de controle, planeja
 e recuperação para navegar até o ponto de destino.
 Porém, antes de utilizar este sistema, ele deve ser configurado para o robô Twil.
 
-\subsection{Localização}
+\subsection{Localização e odometria}
 
-% TODO: Incluir o pacote e e msg quando é falado sobre tipo de msg
-% Na seção 3.3.1 (e nas outras) quando falas de tipos de mensgens, tens
-% que incluir o pacote e o msg. oU seja usar algo como
-% sensor_msgs/msg/JointState. Podem existir mensagens com o mesmo nome em
-% pacotes diferentes ou como serviços.
-% TODO: explicar o seguinte:
-% Faltou explicar que odometria deve publicar a pose de base_link em
-% relação a odom e que a localização deve publicar a pose de odom em
-% relação a map. Tira a parte onde afirmas que odom deve ser usado como
-% referência loca para curto prazo e map como referência global para longo
-% prazo. A coisa é mais complicada do que isso.
+Primeiramente, deve ser configurado o sistema de localização e odometria do robô.
+A localização e a odometria seguem a norma REP~105~\cite{rep_105}, utilizada pelo Nav2.
+Ela define três sistemas de coordenadas: \texttt{map} e \texttt{odom}, fixos ao
+ambiente e o \texttt{base\_link}, fixo a base do robô.
+A odometria se refere a pose do robô em relação ao \texttt{odom},
+que deve ser contínua, porém pode divergir gradualmente.
+A localização, por outro lado, publica a pose do robô em relação ao
+\texttt{map} e não deve divergir, porém, pode ser descontínua.
 
-Primeiramente, deve ser configurado o sistema de localização do robô.
-Atualmente, está sendo utilizado os dados publicados pelo controlador no
+Atualmente, estão sendo utilizados os dados publicados pelo controlador no
 tópico \texttt{/odom} para estimar a posição do robô.
 Na Figura~\ref{fig:robo_rviz} é mostrado o robô Twil no RViz, com a representação
 gráfica da trajetória real, em verde, e a trajetória estimada pelo controlador,
@@ -491,7 +488,7 @@ devem ser realizados ajustes nos parâmetros do controlador.
     {\sourcecitation{Autor.}}
 \end{figure}
 
-Para melhorar a acurácia da localização, é possível utilizar outras fontes de
+Para melhorar a acurácia da odometria, é possível utilizar outras fontes de
 dados e, utilizando o pacote \texttt{robot\_localization}, fundir os dados
 através de um filtro de Kalman.
 Desta forma, as desvantagens de cada sensor podem ser compensadas pelos outros
@@ -501,16 +498,16 @@ Utilizando o \textit{plugin} IMU do Gazebo, ele pode ser adicionado à descriç�
 do robô, publicando mensagens do tipo \texttt{sensor\_msgs/Imu}.
 
 
-Deve ser implementada, também, a odometria visual, utilizando uma câmera RGB-D.
-A odometria visual utiliza o mapa do ambiente e os dados dos sensores para estimar
-a posição do robô.
+Deve ser implementada, também, a localização do robô, utilizando uma câmera RGB-D.
+Neste sistema, é comparado o mapa do ambiente com os dados dos sensores para estimar
+a posição atual do robô.
 Os pacotes \texttt{nav2\_amcl}, \texttt{slam\_toolbox}, \texttt{ORB-SLAM3}
 e \texttt{OpenVSLAM} são capazes de realizar esta funcionalidade.
 Os dois primeiros estão integrados ao Nav2,
 porém foram criados para utilizar sensores LIDAR e, portanto,
 necessitam de mensagens do tipo \texttt{LaserScan}.
-A câmera RGB-D, por outro lado, publica mensagens do tipo \texttt{PointCloud2},
-logo, é necessário converter estas mensagens para o tipo \texttt{LaserScan}
+A câmera RGB-D, por outro lado, publica mensagens do tipo \texttt{sensor\_msgs/PointCloud2},
+logo, é necessário converter estas mensagens para o tipo \texttt{sensor\_msgs/LaserScan}
 para a utilização destes pacotes.
 
 Em contrapartida, os pacotes \texttt{ORB-SLAM3} e \texttt{OpenVSLAM} foram
@@ -519,15 +516,6 @@ integrados ao Nav2 e, devido ao caráter recente das técnicas de
 VSLAM, não são tão robustos quanto os pacotes anteriores.
 Desta forma, serão implementados ambos sistemas, para que seja possível
 comparar os resultados de cada um.
-
-A localização seguirá a norma REP~105~\cite{rep_105}, utilizada pelo Nav2.
-Ela define três sistemas de coordenadas: \texttt{map} e \texttt{odom}, fixos ao
-ambiente e o \texttt{base\_link}, fixo a base do robô.
-A pose do robô em relação ao \texttt{odom}, deve ser contínua, porém pode
-divergir gradualmente, enquanto a pose do robô em relação ao
-\texttt{map} deve ser precisa, mas não é contínua.
-Logo, o \texttt{odom} é utilizado para referência local a curto prazo e o
-\texttt{map} é utilizado para referência global a longo prazo.
 
 \subsection{Mapeamento}
 
