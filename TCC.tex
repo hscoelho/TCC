@@ -468,11 +468,6 @@ utilizando a posição exata do robô no Gazebo.
     {\sourcecitation{Autor.}}
 \end{figure}
 
-
-\todo[inline]{
-    em seguida ta o que foi escrito no tcc I, que acho que pode ser retirado
-}
-
 Nas seções seguintes, será apresentado o robô e o ambiente de testes
 utilizado neste trabalho.
 Em seguida, será detalhado o desenvolvimento dos sistemas necessários
@@ -586,7 +581,7 @@ durante a simulação neste ambiente.
 \section{Odometria e localização}
 
 \todo[inline]{
-tenho que esclarecer melhor sobre o trabalho antigo sobre localizacao
+tenho que esclarecer melhor sobre o tcc antigo sobre localizacao
 
 depois de implementar a localizacao e o odom aqui, 
 eu vi que no tcc do rahul tinha sido implementado o odom do rtabmap e 
@@ -596,7 +591,8 @@ tambem nao tinha o mundo do gazebo, e no trabalho antigo nao tinha nada sobre o
 mundo do gazebo que foi utilizado, entao nao sei como o amcl funcionou
 
 quando eu usei o amcl, eu desisti rapido porque achei que a planta do mapa e o 
-mapa do gazebo tinham diferença suficiente pra localizacao nao ser muito boa}
+mapa do gazebo tinham diferença suficiente pra localizacao nao ser muito boa
+}
 
 A estimativa de posição é feita utilizando o sistemas de coordenadas definido pela
 norma REP 105~\cite{rep_105}, que define quatro sistemas de coordenadas: \texttt{earth}, 
@@ -627,9 +623,12 @@ fundir os dados da odometria das rodas com a orientação e velocidade
 angular do robô, fornecidos pelo IMU. A aceleração linear do IMU não
 foi utilizada.
 
-\todo[inline]{talvez eu fale aqui da configuração do filtro de kalman, e como
-a mensagem da odometria ta com o sistema de coordenadas do twitst diferente do
-esperado pelo filtro}
+\todo[inline]{
+    to pensando se deveria falar aqui sobre a configuração do robot localization,
+    dizendo que usei a informacao de posicao mas seria melhor usar a velocidade da odometria
+    e comoa mensagem da odometria ta com o sistema de coordenadas da velocidade diferente do
+    esperado pelo robot localization
+}
 
 Como alternativa a este sistema, foi implementado um sistema de odometria visual,
 publicado pelo executável \texttt{rgbd\_odometry} do pacote 
@@ -673,7 +672,7 @@ pacote \texttt{odom\_to\_tf\_ros2} para publicar a transformada entre
     Pacote utilizado & Fonte de dados \\
     \hline
     \multirow{2}{*}{\texttt{robot\_localization}} & Encoder das rodas \\ \cline{2-2}
-                                 & IMU	\\
+                                                  & IMU	\\
     \hline
     \multirow{2}{*}{\texttt{rtabmap\_odom}} & Câmera RGB-D \\ \cline{2-2}
                                             & IMU  	\\
@@ -684,37 +683,42 @@ pacote \texttt{odom\_to\_tf\_ros2} para publicar a transformada entre
 \end{center}
 {\sourcecitation{Autor}}
 \end{table}
-\todo[inline]{quem sabe adicionar o tópico e tipo de mensagem na tabela?}
+\todo[inline]{
+    quem sabe adicionar o tópico e tipo de mensagem na tabela?
+
+    se eu adicionar os tópicos, posso referenciar esta tabela
+    quando digo quais tópicos foram gravados no bag
+}
 
 Anteriormente, nenhum sistema de localização era utilizado, e a transformada 
 entre \texttt{map} e \texttt{odom} era estática.
-Esta transformada foi mantida apenas para testes, e foram implementados sistemas
-de localização que ajustam a odometria do robô utilizando sensores absolutos,
+Esta transformada foi mantida para testes, e foram implementados sistemas
+de localização para ajustar a odometria do robô utilizando sensores absolutos,
 que não acumulam erros.
-Esta transformada pode ser publicada em uma frequência menor que a da odometria,
+Esta transformada é publicada em uma frequência menor que a da odometria,
 permitindo a utilização de sistemas de localização com alta complexidade de 
 processamento.
-% como algoritmos que comparam o mapa do ambiente com os 
-% dados de sensores óticos.
 
-\todo[inline]{reescrever esse paragrafo}
+\todo[inline]{nao achei bom o prox paragrafo}
 
 Uma opção de sistema de localização é o \texttt{nav2\_amcl}, que utiliza
 \textit{Adaptive Monte Carlo Localization~(AMCL)} e um mapa estático para 
 estimar a posição do robô.
 Porém, optou-se por utilizar sistemas de SLAM, que realizam
-o mapeamento simultaneamente com a localização, já que a planta 
-do prédio e o mapa do Gazebo não são idênticos, e o objetivo é a utilização do
-robô em ambiente dinâmicos ou pouco conhecidos, onde um mapa estático não seria 
-adequado. Portanto, dois sistemas de SLAM foram implementados, 
+o mapeamento simultaneamente com a localização, já que 
+o objetivo é a utilização do robô em ambiente dinâmicos ou pouco conhecidos,
+onde um mapa estático não seria adequado. 
+Além disso, a planta do prédio e o mapa do Gazebo não são idênticos, que 
+afeta o desempenho do sistema mesmo em situações ideais.
+Portanto, dois sistemas de SLAM foram implementados, 
 o \textit{slam\_toolbox} e o \textit{rtabmap}.
 
 O \textit{slam\_toolbox} realiza o SLAM em 2D, e foi criado para utilizar sensores
 a laser. Portanto, são esperadas mensagens do tipo \texttt{sensor\_msgs/LaserScan}
 para percepção do ambiente neste sistema. Como a câmera RGB-D não publica mensagens 
-desse tipo, foi utilizado o pacote \texttt{depthimage\_to\_laserscan} para obter
-mensagens do tipo \texttt{sensor\_msgs/LaserScan} a partir das imagens de profundidade
-da câmera.
+desse tipo, foi utilizado o pacote \texttt{depthimage\_to\_laserscan} para converter
+a imagem de profundidade da câmera na mensagem esperada, em forma de um feixe de luz
+em duas dimensões localizado na altura da câmera.
 O \textit{rtabmap}, por outro lado, realiza o SLAM em 3D, e utiliza todos os
 tópicos publicados pela câmera RGB-D, e não necessita de conversão de mensagens.
 
@@ -723,12 +727,20 @@ além da posição global do robô no tópico \texttt{/pose}, em mensagens do ti
 \texttt{geometry\_msgs/PoseWithCovarianceStamped}, que são utilizadas para 
 comparação com a posição real e a estimada pela odometria.
 
-Apesar de realizar o mapeamento do ambiente, estes sistemas podem ser iniciados
-com informações de uma sessão prévia de mapeamento, que pode aumentar
-a precisão da localização. Porém, nos testes realizados, a sessão de SLAM
-foi iniciada do zero, para simular um ambiente desconhecido.
+Apesar de realizar o mapeamento do ambiente em tempo-real, estes sistemas 
+podem ser iniciadoscom informações de uma sessão prévia de mapeamento, 
+que pode aumentar a precisão da localização, caso o mapa seja mais fiel 
+que o construído. Porém, nos testes realizados, a sessão de SLAM foi iniciada
+do zero, para simular um ambiente desconhecido.
 
-\missingfigure{seria legal uma tabela com os sistemas de localizacao}
+\todo[inline]{
+    talvez seja bom falar sobre o loop-closure no paragrafo anterior
+}
+
+\missingfigure{
+    seria legal uma tabela com os sistemas de localizacao,
+    igual/parecido ao da odometria
+}
 
 \section{Mapeamento}
 
@@ -740,9 +752,9 @@ a trajetória com menor custo para o destino desejado.
 
 Apesar do sistema de SLAM fornecer um mapa do ambiente, este mapa não será
 utilizado no mapa de custo. Como este mapa não está completo desde o início,
-ele não pode ser utilizado em ambientes não conhecidos. Além disso, o mapa
-pode ser criado em estados não desejados como, por exemplo, com trajetórias
-bloqueadas por obstáculos temporários.
+não é possível planejar trajetórias para ambientes não visitados previamente.
+Além disso, o mapa pode ser criado em estados não desejados como,
+por exemplo, com trajetórias bloqueadas por obstáculos temporários.
 
 Portanto, haverão duas representações do ambiente, uma criada pelo SLAM, que 
 é utilizada pelo mesmo sistema para localização, e outra criada utilizando
@@ -792,25 +804,57 @@ superior a 1,5 metro não serão detectados.
 Isso é importante para evitar a detecção de obstáculos que não são relevantes para
 a navegação como, no caso do ambiente de simulação utilizado, a moldura das portas.
 
+\todo[inline]{
+    os artigos sobre o Nav2 utilizam o Spatio Temporal Voxel Layer,
+    que introduz um "decay" a camada voxel
+
+    queria usar ele mas o parece que o pacote nao foi migrado pro Humble,
+    tenho que escrever isso em algum lugar
+}
 
 A última camada, \texttt{inflation\_layer}, cria uma zona de segurança ao redor
 dos objetos captados nas outras camadas, para garantir uma distância segura
 ao planejar a trajetória.
-Em \textcite{ros_tuning_guide}, recomenda-se que a curva de inflação tenha uma
-inclinação baixa, para cobrir corredores inteiros.
-Desta forma, são criadas trajetórias que passam no centro do corredor e
-mantém a maior distância possível dos obstáculos,
-como mostram as Figuras~\ref{fig:inflation_low}~e~\ref{fig:inflation_high}.
+Em \textcite{ros_tuning_guide}, recomenda-se que a camada de inflação cubra 
+um raio grande em volta de obstáculos com uma curva de decaimento de
+inclinação baixa, criando um campo em grande parte do mapa de custo.
+Desta forma, são criadas trajetórias que passam no meio de obstáculos, 
+mantendo a maior distância possível entre o robô e possíveis colisões.
+As as Figuras~\ref{fig:inflation_low}~e~\ref{fig:inflation_high}, mostram
+uma comparação entre o mapa de custo com inflação baixa e alta.
 \todo{nao sei se coloco aqui ou nos resultados a comparação entre as duas inflações}
 
-\section{Ros bags para testes}
+\begin{figure}[h]
+    \begin{subfigure}{0.5\linewidth}
+    {
+        \centering
+        \caption{Mapa de custo com inflação baixa.}
+        \label{fig:inflation_low}
+        \includegraphics[width=0.9\textwidth, height=5.5cm]{costmap_not_inflated.png}\\
+    }
+    {\sourcecitation{Autor}.}
+    \end{subfigure}
+    \begin{subfigure}{0.5\linewidth}
+    {
+        \centering
+        \caption{Mapa de custo com inflação alta.}
+        \label{fig:inflation_high}
+        \includegraphics[width=0.9\textwidth, height=5.5cm]{costmap_inflated.png}\\
+    }
+    {\sourcecitation{Autor}.}
+    \end{subfigure}
+\end{figure}
+
+\section{Gravação dos testes}
+
+\todo[inline]{existe uma tradução para bags?}
 
 Para testar e comparar os sistemas de odometria, localização e mapeamento,
 foram utilizados arquivos de gravação de tópicos do ROS 2, chamados de 
 \textit{bags}.
 A utilização desta funcionalidade permite a comparação dos sistemas 
 utilizando os mesmos dados de entrada.
-Além disso, foi possível simular o sistema no Gazebo e executar os nodos 
+Além disso, foi possível realizar a simulação no Gazebo e executar os nodos 
 de localização separadamente, o que aliviou a exigência de processamento
 do computador utilizado.
 
@@ -830,15 +874,13 @@ Os tópicos gravados foram:
     \item \texttt{/twist\_mrac\_controller/odom}
 \end{itemize}
 
-
-\todo[inline]{ao inves de criar essa lista aqui, seria melhor referenciar
+\todo[inline]{ao inves de criar essa lista aqui, acho seria melhor referenciar
 as tabelas do sistema de odometria e localizacao(que tem que ter os tópicos
 neste caso), e explicar os tópicos que sobraram, como o ground truth e 
 o joint states}
 
 
-
-\todo[inline]{fiquei com a impressao que ficou enrolada essa parte, 
+\todo[inline]{fiquei com a impressao que ficou enrolada o paragrafo a seguir, 
 entao acho que seria melhor reescrever depois}
 
 Para a execução dos \textit{bags}, não é necessário executar o Gazebo e o 
@@ -865,32 +907,13 @@ dos dados e criação de gráficos após a execução dos testes.
 \chapter{Resultados}
 \label{resultados}
 
-\begin{figure}[h]
-    \begin{subfigure}{0.5\linewidth}
-    {
-        \centering
-        \caption{Mapa de custo com inflação baixa.}
-        \label{fig:inflation_low}
-        \includegraphics[width=0.9\textwidth, height=5.5cm]{costmap_not_inflated.png}\\
-    }
-    {\sourcecitation{Autor}.}
-    \end{subfigure}
-    \begin{subfigure}{0.5\linewidth}
-    {
-        \centering
-        \caption{Mapa de custo com inflação alta.}
-        \label{fig:inflation_high}
-        \includegraphics[width=0.9\textwidth, height=5.5cm]{costmap_inflated.png}\\
-    }
-    {\sourcecitation{Autor}.}
-    \end{subfigure}
-\end{figure}
+
 \missingfigure[]{colocar screenshots do video do costmap com obstaculo}
 
 \begin{figure}[h]
     {
         \centering
-        \caption{ESCREVER CAPTION}
+        \caption{RViz durante a gravação da \textit{bag} de teste}
         \label{fig:}
         \includegraphics[width=0.98\textwidth]{base_bag_rviz_full.png}\\
     }
