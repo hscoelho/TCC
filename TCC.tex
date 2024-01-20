@@ -291,15 +291,13 @@ Esta implementação é utilizada com sucesso para caminhos curtos,
 mas pode apresentar dificuldade em lidar com ambientes dinâmicos
 maiores~\cite{layered_costmaps}.
 
-% Laranja pediu referencias para esta parte
 Uma solução para este problema são mapas de custo com camadas,
 que separam o processamento dos dados dos mapas de custos em camadas semanticamente distintas.
 Por exemplo, os dados dos sensores e o mapa estático previamente conhecido são processados
 em camadas separadas e depois combinados em um único mapa de custo.
 A Figura \ref{fig:mapa_camadas} mostra uma configuração possível de camadas
 de mapas de custo.
-\todo[inline]{colocar que a figura é traduzida/adaptada}
-\todo[]{colocar mais referencias(Laranja recomendou)}
+\todo[inline]{Laranja pediu mais referencias nessa parte}
 
 \begin{figure}[h]
     {
@@ -383,16 +381,6 @@ Os variados componentes do robô, como os sensores utilizados neste trabalho,
 foram implementados através de \textit{plugins} do Gazebo,
 que comunicam o estado do robô durante a simulação através de tópicos do ROS 2.
 
-\todo[inline]{
-    explicar melhor a arquitetura do nav2 aqui
-
-    a imagem da arquitetura não é muito boa, entao precisa de uma explicacao geral melhor
-
-    é uma boa explicar o que faz o servidor de controlador(define a velocidade do robo pra
-    seguir a trajetoria), já que é utiliza outro contrador para transformar a velocidade
-    em comandos para as rodas do robo
-}
-
 O \textit{Navigation2}, que tem sua arquitetura mostrada na Figura
 \ref{fig:nav2_arc}, foi configurado para utilizar estes componentes.
 O \textit{Nav2} é responsável pelo envio comandos de velocidade para o robô, para que ele chegue
@@ -428,13 +416,6 @@ Em razão disso, foi adicionada a câmera RGB-D Intel RealSense D435 e um IMU ao
 e o sistema de navegação foi aprimorado com a utilização destes sensores nos
 de odometria, localização e mapeamento.
 
-\todo[inline]{
-    no diagrama simplificado,
-    optei por nao colocar uma seta da localizacao para camada voxel,
-    mas é claro que precisa da posicao do robo, só que ele usa a localizacao do nav2,
-    entao isso foi configurado "implicitamente"
-    (eu também achei que essa seta ia poluir muito o diagrama)}
-
 Um diagrama simplificado da arquitetura do trabalho é mostrado na
 Figura \ref{fig:arq_trabalho}.
 Neste trabalho, todos sistemas conectados a câmera e o IMU foram modificados.
@@ -449,8 +430,6 @@ O segundo mapa é criado e utilizado pelos sistemas de localização do robô.
 Em verde, estão os componentes referentes a estimativa de
 posição do robô, onde foram adicionados pacotes que realizam a
 odometria visual e pacotes de SLAM.
-\todo{apesar de eu ter adicionado a fusao, no final nao mudou nada na odometria,
-    talvez seja melhor nem mencionar}
 Também foi realizado ajustes na odometria das rodas, através da fusão
 de dados com o sensor IMU.
 Para testes, foi mantida a opção de utilizar a transformada estática entre
@@ -886,7 +865,7 @@ Isso permitiu a utilização do programa
 \texttt{Plotjuggler}, para a análise
 dos dados e criação de gráficos após a execução dos testes.
 
-\chapter{Resultados e discussão}
+\chapter{Resultados}
 \label{resultados}
 
 Neste capítulo, serão apresentados os resultados dos testes realizados.
@@ -959,7 +938,7 @@ porque a inclinação original fazia com que certos corredores fossem evitados.
     \end{subfigure}
 \end{figure}
 
-\section{Odometria, localização e mapeamento SLAM}
+\section{Odometria, localização}
 
 O testes de odometria, localização e mapeamento SLAM foram realizados na mesma
 sacola de dados, como descrito na seção \ref{met:testes},
@@ -1014,8 +993,8 @@ apresentou um resultado satisfatório. Existe uma divergência ao longo do tempo
 além de um erro significativo na última curva da trajetória, estimando um caminho
 com alto ruído.
 Porém, esta odometria apresentou desempenho satisfatório para utilização
-em conjuntos com os testes dos sistemas de SLAM.
-Porém, este desempenho pode não ser replicado em ambientes reais, devido
+em conjuntos com os testes dos sistemas de SLAM, como será mostrado a seguir.
+Este desempenho pode não ser replicado em ambientes reais, devido
 ao ruído presente fora da simulação.
 
 \begin{figure}[h]
@@ -1041,6 +1020,19 @@ ao ruído presente fora da simulação.
     \end{subfigure}
 \end{figure}
 
+Na Figura \ref{fig:localization}, são mostrados os resultados dos sistemas
+de localização em conjunto com a odometria visual. Em vermelho está a posição
+real do robô, no eixos X e Y, e em verde a posição estimada pela odometria visual,
+como nos gráficos anteriores. Em azul, está a posição global estimada pelo sistema
+de localização, que é obtida através da transformada entre os sistemas de coordenadas
+\texttt{map}, \texttt{odom} e \texttt{base\_link}.
+
+A Figura \ref{fig:localization_rtabmap} mostra o resultado do sistema de localização
+do pacote \texttt{rtabmap\_slam}, e a Figura \ref{fig:localization_slam_toolbox} do
+pacote \texttt{slam\_toolbox}.
+É possível perceber que ambos sistemas de localização melhoraram a estimativa da posição
+em comparação com a odometria, porém o \texttt{slam\_toolbox} apresentou um desempenho
+melhor, com uma estimativa mais próxima da posição real do robô.
 
 \begin{figure}[h]
     \caption{Sistemas de localização}
@@ -1064,30 +1056,51 @@ ao ruído presente fora da simulação.
     \end{subfigure}
 \end{figure}
 
-\todo[inline]{colocar que, devido ao processamento e meu note nao ser tao bom
-    a odometria visual nao ficou igual em todas as execucoes mesmo com a mesma
-    entrada}
-% \begin{figure}[h]
-%     \caption{Mapeamento SLAM}
-%     \begin{subfigure}{0.5\linewidth}
-%         {
-%             \centering
-%             \caption{Pacote \texttt{rtabmap\_slam}.}
-%             \label{fig:mapping_rtabmap}
-%             \includegraphics[width=0.98\linewidth]{rtabmap_slam_map-compared.png}\\
-%         }
-%         {\sourcecitation{Autor}.}
-%     \end{subfigure}
-%     \begin{subfigure}{0.5\linewidth}
-%         {
-%             \centering
-%             \caption{Pacote \texttt{slam\_toolbox}.}
-%             \label{fig:mapping_slam_toolbox}
-%             \includegraphics[width=0.98\linewidth]{slam_toolbox_map-compared.png}\\
-%         }
-% {\sourcecitation{Autor}.}
-%     \end{subfigure}
-% \end{figure}
+Nota-se que, apesar de utilizar a mesma entrada em todas execuções da simulação, a
+odometria visual apresentou resultados ligeiramente diferentes em cada execução.
+Isto acontece porque a máquina utilizada para a execução não possui capacidade de
+processamento suficiente para realizar os cálculos necessários por estes pacotes
+na frequência configurada. Na execução com o texttt{slam\_toolbox}, que exige
+alta capacidade de processamento, este problema foi mais evidente.
+Os algoritmos de SLAM também sofreram este problema.
+Portanto, em máquinas mais potentes, a estimativa de posição pode ser mais precisa.
+
+\section{Mapeamento SLAM}
+
+Como mencionado anteriormente, os dois sistemas de localização utilizados realizam
+o mapeamento simultaneamente com a localização. Portanto, tanto o \texttt{slam\_toolbox}
+quanto o \texttt{rtabmap\_slam} geraram um mapa do ambiente durante a execução da
+simulação.
+Estes mapas podem ser utilizados para novas sessões de localização, ou em mapas
+de custo para planejamento de trajetória.
+
+Na Figura \ref{fig:mapping_rtabmap}, é mostrado o mapa gerado pelo
+\texttt{rtabmap\_slam}, que cria um mapa utilizando os dados tridimensionais da
+câmera RGB-D, enquanto que na Figura \ref{fig:mapping_slam_toolbox} é mostrado o
+mapa gerado pelo \texttt{slam\_toolbox}, que utiliza uma conversão da imagem de
+profundidade em um feixe de luz em duas dimensões. A representação do ambiente
+no Gazebo foi sobreposta aos mapas para facilitar a comparação.
+Nestes mapas, as áreas em branco claro são áreas livres, e as áreas em preto são
+consideradas ocupadas, enquanto que as áreas em cinza são desconhecidas.
+
+É possível perceber diferenças na geração destes mapas devido ao tipo de mensagem
+utilizado. O mapa gerado pelo \texttt{rtabmap\_slam} gera um representação mais
+detalhada da escada, percebendo-a desde sua base, enquanto que o \texttt{slam\_toolbox}
+só mapeia a escada na mesma altura da câmera, que é a altura da mensagem passada
+a ela.
+Além disso, o \texttt{rtabmap\_slam} mapeou as molduras das portas, que estão acima
+da altura da câmera. Este comportamento, porém, pode ser modificado, já que
+não são obstáculos relevantes para a navegação.
+
+Outro diferença é no mapeamento do chão dos mapas.
+Devido ao campo de visão da câmera, não é captado o chão em frente ao robô, que
+portanto não é mapeado pelo \texttt{rtabmap\_slam}. Por outro lado, como o
+\texttt{slam\_toolbox} utiliza um feixe de luz em duas dimensões, é considerado
+que todo espaço entre o robô e o primeiro obstáculo detectado é livre, mapeando
+assim o chão não captado pela câmera.
+Em situações em que não é detectado nenhum obstáculo dentro do limite da câmera,
+como a área entre o final da trajetória do robô e a porta da sala no canto superior
+direito da Figura \ref{fig:mapping_slam_toolbox}, o chão não é mapeado.
 
 \begin{figure}[h]
     {
@@ -1109,7 +1122,11 @@ ao ruído presente fora da simulação.
     % {\sourcecitation{Autor}.}
 \end{figure}
 
-
+Percebe-se, também, que o mapa gerado pelo \texttt{slam\_toolbox} é mais fiel ao
+ambiente real, já que o mapa gerado pelo \texttt{rtabmap\_slam} possui uma inclinação
+mais acentuada em relação ao mapa real.
+Isto é devido a estimativa da posição do robô, apresentadas anteriormente, em que
+o \texttt{slam\_toolbox} apresentou uma estimativa mais precisa.
 
 \chapter{Conclusão}
 \label{conclusao}
