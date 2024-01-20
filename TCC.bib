@@ -1,4 +1,34 @@
 
+@online{actions,
+  author   = {Geoffrey Biggs, Jacob Perron, Shane Loretz},
+  title    = {Actions},
+  url      = {https://design.ros2.org/articles/actions.html},
+  year     = {2020},
+  addendum = {Acesso em: 10 de ago. de 2023}
+}
+
+@online{amazon_robot,
+  author   = {Amazon},
+  title    = {10 years of Amazon robotics: how robots help sort packages, move product, and improve safety},
+  url      = {https://www.aboutamazon.com/news/operations/10-years-of-amazon-robotics-how-robots-help-sort-packages-move-product-and-improve-safety},
+  addendum = {Acesso em: 04 de ago. de 2023},
+  urldate  = {2023-04-08},
+  year     = {2022}
+}
+
+@article{astar,
+  doi       = {10.1109/tssc.1968.300136},
+  url       = {https://doi.org/10.1109/tssc.1968.300136},
+  year      = {1968},
+  publisher = {Institute of Electrical and Electronics Engineers ({IEEE})},
+  volume    = {4},
+  number    = {2},
+  pages     = {100--107},
+  author    = {Peter Hart and Nils Nilsson and Bertram Raphael},
+  title     = {A Formal Basis for the Heuristic Determination of Minimum Cost Paths},
+  journal   = {{IEEE} Transactions on Systems Science and Cybernetics}
+}
+
 @book{BehaviorTree,
   doi       = {10.1201/9780429489105},
   url       = {https://doi.org/10.1201%2F9780429489105},
@@ -8,6 +38,17 @@
   publisher = {{CRC} Press},
   author    = {Michele Colledanchise and Petter Ögren},
   title     = {Behavior Trees in Robotics and {AI}}
+}
+
+@article{dijkstra,
+  title     = {A note on two problems in connexion with graphs},
+  author    = {Dijkstra, Edsger W},
+  journal   = {Numerische mathematik},
+  volume    = {1},
+  number    = {1},
+  pages     = {269--271},
+  year      = {1959},
+  publisher = {Springer}
 }
 
 @book{IntroductionToMobileRobots,
@@ -21,27 +62,17 @@
   edition   = {2}
 }
 
-@book{slam_toolbox_art,
-  title  = {SLAM Toolbox: SLAM for the dynamic world},
-  author = {Steve Macenski and Ivona Jambrecic},
-  url    = {https://doi.org/10.21105/joss.02783},
-  year   = {2021},
-  month  = {07},
-%   doi           = {0.21105/joss.02783},
-%   archiveprefix = {joss},
+@inproceedings{layered_costmaps,
+  author    = {Lu, David V. and Hershberger, Dave and Smart, William D.},
+  booktitle = {2014 IEEE/RSJ International Conference on Intelligent Robots and Systems},
+  title     = {Layered costmaps for context-sensitive navigation},
+  year      = {2014},
+  volume    = {},
+  number    = {},
+  pages     = {709-715},
+  doi       = {10.1109/IROS.2014.6942636}
 }
 
-@software{slam_toolbox_software,
-  author       = {Macenski, Steven and
-                  Jambrecic, Ivona},
-  title        = {SLAM Toolbox: SLAM for the dynamic world},
-  month        = may,
-  year         = 2021,
-  publisher    = {Zenodo},
-  version      = {2.4.0},
-  doi          = {10.5281/zenodo.4749721},
-  url          = {https://doi.org/10.5281/zenodo.4749721}
-}
 
 @inproceedings{Nav2,
   doi       = {10.1109/iros45743.2020.9341207},
@@ -54,6 +85,125 @@
   booktitle = {2020 {IEEE}/{RSJ} International Conference on Intelligent Robots and Systems ({IROS})}
 }
 
+@online{nav2_site,
+  author   = {Navigation2},
+  title    = {Nav2 Overview},
+  url      = {https://navigation.ros.org/index.html},
+  urldate  = {2023-30-07},
+  year     = {2020},
+  addendum = {Acesso em: 30 de jul. de 2023}
+}
+
+@thesis{petry_tcc,
+  title       = {Navegação de um robô móvel em ambiente semi-estruturado},
+  author      = {Gabriel Rodrigues Petry},
+  year        = {2019},
+  type        = {Trabalho de Conclusão de Curso (Graduação em Engenharia de Controle e Automação)},
+  institution = {Universidade Federal do Rio Grande do Sul},
+  location    = {Porto Alegre}
+}
+
+@thesis{rahul_tcc,
+  title       = {Localização de robôs móveis no ROS},
+  author      = {Raul Cataluña Athayde},
+  year        = {2021},
+  type        = {Trabalho de Conclusão de Curso (Graduação em Engenharia de Controle e Automação)},
+  institution = {Universidade Federal do Rio Grande do Sul},
+  location    = {Porto Alegre}
+}
+
+@software{realsense_ros,
+  author    = {Intel},
+  title     = {realsense-ros},
+  publisher = {Intel},
+  location  = {Santa Clara, CA, EUA},
+  url       = {https://github.com/IntelRealSense/realsense-ros/},
+  addendum  = {Acesso em: 05 de ago. de 2023}
+}
+
+@online{rep_105,
+  author   = {Wim Meeusse},
+  title    = {REP 105},
+  url      = {https://www.ros.org/reps/rep-0105.html},
+  addendum = {Acesso em: 05 de ago. de 2023},
+  urldate  = {2023-04-08},
+  year     = {2010}
+}
+
+@online{robot_market,
+  author   = {Statista},
+  title    = {Size of the global market for autonomous mobile robots (AMR) from 2016 to 2021, with a forecast through 2028},
+  url      = {https://www.statista.com/statistics/1285835/worldwide-autonomous-robots-market-size/},
+  addendum = {Acesso em: 04 de ago. de 2023},
+  urldate  = {2023-04-08},
+  year     = {2023}
+}
+
+@misc{ros_tuning_guide,
+  title         = {ROS Navigation Tuning Guide},
+  author        = {Kaiyu Zheng},
+  year          = {2019},
+  eprint        = {1706.09068},
+  archiveprefix = {arXiv},
+  primaryclass  = {cs.RO}
+}
+
+@article{ROS2Article,
+  author  = {Steven Macenski  and Tully Foote  and Brian Gerkey  and Chris Lalancette  and William Woodall },
+  title   = {Robot Operating System 2: Design, architecture, and uses in the wild},
+  journal = {Science Robotics},
+  volume  = {7},
+  number  = {66},
+  pages   = {eabm6074},
+  year    = {2022},
+  doi     = {10.1126/scirobotics.abm6074},
+  url     = {https://www.science.org/doi/abs/10.1126/scirobotics.abm6074}
+}
+
+@manual{ROS2Docs,
+  organization = {Open Robotics},
+  title        = {ROS 2 Documentation},
+  year         = {2023},
+  url          = {https://docs.ros.org/en/humble/index.html},
+  urldate      = {2023-29-07}
+}
+
+
+@article{SensorAndSLAM,
+  title    = {Sensor Technologies and Simultaneous Localization and Mapping (SLAM)},
+  journal  = {Procedia Computer Science},
+  volume   = {76},
+  pages    = {174-179},
+  year     = {2015},
+  note     = {2015 IEEE International Symposium on Robotics and Intelligent Sensors (IEEE IRIS2015)},
+  issn     = {1877-0509},
+  doi      = {https://doi.org/10.1016/j.procs.2015.12.336},
+  url      = {https://www.sciencedirect.com/science/article/pii/S1877050915038375},
+  author   = {T.J. Chong and X.J. Tang and C.H. Leng and M. Yogeswaran and O.E. Ng and Y.Z. Chong},
+  keywords = {SLAM, mapping, localization, sensors},
+  abstract = {This paper presents a comprehensive review on sensor modalities currently in used for solving the Simultaneous Localization and Mapping (SLAM) problem. The review focuses on SLAM for mobile robots in a variety of environments. The strengths and weaknesses of acoustic modality sensors such as ultrasonic and sonar sensors, laser range finders, visual sensors such as stereo vision sensors, and RGB-D sensors like the Microsoft Kinect and the Asus Xtion Pro Live are compared based on current usage in published research papers. Based on this review, we propose that RGB-D sensors have unique advantages which make them particularly suitable for SLAM problems.}
+}
+
+@book{slam_toolbox_art,
+  title  = {SLAM Toolbox: SLAM for the dynamic world},
+  author = {Steve Macenski and Ivona Jambrecic},
+  url    = {https://doi.org/10.21105/joss.02783},
+  year   = {2021},
+  month  = {07}
+}
+
+@software{slam_toolbox_software,
+  author    = {Macenski, Steven and
+               Jambrecic, Ivona},
+  title     = {SLAM Toolbox: SLAM for the dynamic world},
+  month     = may,
+  year      = 2021,
+  publisher = {Zenodo},
+  version   = {2.4.0},
+  doi       = {10.5281/zenodo.4749721},
+  url       = {https://doi.org/10.5281/zenodo.4749721}
+}
+
 @misc{VSLAM,
   title         = {A Comparison of Modern General-Purpose Visual SLAM Approaches},
   author        = {Alexey Merzlyakov and Steve Macenski},
@@ -61,156 +211,4 @@
   eprint        = {2107.07589},
   archiveprefix = {arXiv},
   primaryclass  = {cs.RO}
-}
-
-@article{SensorAndSLAM,
-title = {Sensor Technologies and Simultaneous Localization and Mapping (SLAM)},
-journal = {Procedia Computer Science},
-volume = {76},
-pages = {174-179},
-year = {2015},
-note = {2015 IEEE International Symposium on Robotics and Intelligent Sensors (IEEE IRIS2015)},
-issn = {1877-0509},
-doi = {https://doi.org/10.1016/j.procs.2015.12.336},
-url = {https://www.sciencedirect.com/science/article/pii/S1877050915038375},
-author = {T.J. Chong and X.J. Tang and C.H. Leng and M. Yogeswaran and O.E. Ng and Y.Z. Chong},
-keywords = {SLAM, mapping, localization, sensors},
-abstract = {This paper presents a comprehensive review on sensor modalities currently in used for solving the Simultaneous Localization and Mapping (SLAM) problem. The review focuses on SLAM for mobile robots in a variety of environments. The strengths and weaknesses of acoustic modality sensors such as ultrasonic and sonar sensors, laser range finders, visual sensors such as stereo vision sensors, and RGB-D sensors like the Microsoft Kinect and the Asus Xtion Pro Live are compared based on current usage in published research papers. Based on this review, we propose that RGB-D sensors have unique advantages which make them particularly suitable for SLAM problems.}
-}
-
-
-@INPROCEEDINGS{layered_costmaps,
-  author={Lu, David V. and Hershberger, Dave and Smart, William D.},
-  booktitle={2014 IEEE/RSJ International Conference on Intelligent Robots and Systems}, 
-  title={Layered costmaps for context-sensitive navigation}, 
-  year={2014},
-  volume={},
-  number={},
-  pages={709-715},
-  doi={10.1109/IROS.2014.6942636}
-}
-
-@manual{ROS2Docs,
-	organization="Open Robotics",
-	title="ROS 2 Documentation",
-	year="2023",
-	url={https://docs.ros.org/en/humble/index.html},
-	urldate={2023-29-07}
-}
-
-@article{ROS2Article,
-    author = {Steven Macenski  and Tully Foote  and Brian Gerkey  and Chris Lalancette  and William Woodall },
-    title = {Robot Operating System 2: Design, architecture, and uses in the wild},
-    journal = {Science Robotics},
-    volume = {7},
-    number = {66},
-    pages = {eabm6074},
-    year = {2022},
-    doi = {10.1126/scirobotics.abm6074},
-    URL = {https://www.science.org/doi/abs/10.1126/scirobotics.abm6074}
-}
-
-@online{nav2_site,
-    author    = "Navigation2",
-    title     = "Nav2 Overview",
-    url       = {https://navigation.ros.org/index.html},
-    urldate   = {2023-30-07},
-    year      = {2020},
-    addendum  = {Acesso em: 30 de jul. de 2023}
-}
-
-@online{actions,
-    author    = "Geoffrey Biggs, Jacob Perron, Shane Loretz",
-    title     = "Actions",
-    url       = {https://design.ros2.org/articles/actions.html},
-    year      = {2020},
-    addendum  = {Acesso em: 10 de ago. de 2023}
-}
-
-@online{robot_market,
-    author    = "Statista",
-    title     = "Size of the global market for autonomous mobile robots (AMR) from 2016 to 2021, with a forecast through 2028",
-    url       = {https://www.statista.com/statistics/1285835/worldwide-autonomous-robots-market-size/},
-    addendum  = {Acesso em: 04 de ago. de 2023},
-    urldate   = {2023-04-08},
-    year      = {2023},
-}
-
-@online{amazon_robot,
-    author    = "Amazon",
-    title     = "10 years of Amazon robotics: how robots help sort packages, move product, and improve safety",
-    url       = {https://www.aboutamazon.com/news/operations/10-years-of-amazon-robotics-how-robots-help-sort-packages-move-product-and-improve-safety},
-    addendum  = {Acesso em: 04 de ago. de 2023},
-    urldate   = {2023-04-08},
-    year      = {2022},
-}
-
-@misc{ros_tuning_guide,
-      title={ROS Navigation Tuning Guide}, 
-      author={Kaiyu Zheng},
-      year={2019},
-      eprint={1706.09068},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO}
-}
-
-@thesis{petry_tcc,
-    title = {Navegação de um robô móvel em ambiente semi-estruturado},
-    author = {Gabriel Rodrigues Petry},
-    year = {2019},
-    type = {Trabalho de Conclusão de Curso (Graduação em Engenharia de Controle e Automação)},
-    institution = {Universidade Federal do Rio Grande do Sul},
-    location = {Porto Alegre},
-}
-
-@thesis{rahul_tcc,
-    title = {Localização de robôs móveis no ROS},
-    author = {Raul Cataluña Athayde},
-    year = {2021},
-    type = {Trabalho de Conclusão de Curso (Graduação em Engenharia de Controle e Automação)},
-    institution = {Universidade Federal do Rio Grande do Sul},
-    location = {Porto Alegre}
-}
-
-
-@software{realsense_ros,
-    author       = {Intel},
-    title        = {realsense-ros},
-    publisher    = {Intel},
-    location     = {Santa Clara, CA, EUA},
-    url          = {https://github.com/IntelRealSense/realsense-ros/},
-    addendum     = {Acesso em: 05 de ago. de 2023},
-}
-
-@online{rep_105,
-    author    = "Wim Meeusse",
-    title     = "REP 105",
-    url       = {https://www.ros.org/reps/rep-0105.html},
-    addendum  = {Acesso em: 05 de ago. de 2023},
-    urldate   = {2023-04-08},
-    year      = {2010},
-}
-
-@article{dijkstra,
-  title={A note on two problems in connexion with graphs},
-  author={Dijkstra, Edsger W},
-  journal={Numerische mathematik},
-  volume={1},
-  number={1},
-  pages={269--271},
-  year={1959},
-  publisher={Springer}
-}
-
-@article{astar,
-  doi = {10.1109/tssc.1968.300136},
-  url = {https://doi.org/10.1109/tssc.1968.300136},
-  year = {1968},
-  publisher = {Institute of Electrical and Electronics Engineers ({IEEE})},
-  volume = {4},
-  number = {2},
-  pages = {100--107},
-  author = {Peter Hart and Nils Nilsson and Bertram Raphael},
-  title = {A Formal Basis for the Heuristic Determination of Minimum Cost Paths},
-  journal = {{IEEE} Transactions on Systems Science and Cybernetics}
 }
