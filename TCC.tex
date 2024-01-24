@@ -1258,6 +1258,22 @@ por erros na descrição do robô. Além disso, a odometria visual pode
 apresentar resultados inferiores em ambientes reais, devido ao maior
 ruído presente fora da simulação.
 
+\todo[inline] {
+    acho que deveria reescrever o paragrafo seguinte.
+    
+    sobre os erros da odometria da roda: doi:10.1109/70.544770
+
+    isso pode ser usado para explicar a diminuição do erro usando o 
+    imu: 
+    Finally, we note that to reduce overall odometry errors, 
+orientation errors are the main source of concern because once 
+they are incurred they grow without bound into lateral position 
+errors [14], [19].
+
+    também eu poderia fazer um gráfico do erro, parece que o erro
+    da odometria das rodas é sistemático
+}
+
 Logo, em trabalhos futuros, recomenda-se ajustes no sistema de
 odometria das rodas, para garantir uma estimativa mais precisa da
 posição do robô. Considerando o gráfico da Figura
