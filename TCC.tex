@@ -76,6 +76,10 @@
 \chapter{Introdução}
 
 \todo[inline]{
+    eu nao mexi aqui desde o tcc I, entao ainda tem coisa pra adicionar
+}
+
+\todo[inline]{
     eu poderia separar a introducao em secoes, como motivacao, objetivo, organizacao do trabalho
 
     tambem poderia mostrar o robo e dizer o que ja estava feito antes do
@@ -104,7 +108,7 @@ de modo a evitar colisões. \todo[inline]{Laranja disse que esta parte
         \centering
         \caption{Mercado global de robôs autônomos de 2016 a 2021, com projeção até 2028.}
         \label{fig:mercado_robo}
-        \includegraphics[width=0.9\textwidth]{mercado_robo}\\
+        \includegraphics[width=0.75\textwidth]{mercado_robo}\\
     }
     {\sourcecitation{\textcite{robot_market}.}}
 \end{figure}
@@ -135,7 +139,11 @@ desenvolvimento, além do planejamento da implementação deste sistema.
 \chapter{Revisão da Literatura}
 \label{revisao}
 
-% Laranja sugeriu um texto introdutório aqui...
+\todo[inline]{
+    to refazendo essa parte, tirando o que nao foi usado
+    e adicionando mais info sobre o que foi usado
+}
+
 Neste capítulo são apresentados os conceitos necessários para o
 desenvolvimento do trabalho, como o Robot Operating System~(ROS) 2,
 árvores de comportamento, mapeamento de ambientes e o
@@ -249,6 +257,26 @@ sensores, portanto, são ideias para publicação da transformada entre
 
 \section{Fusão de dados de sensores}
 
+Robôs modernos estão cada vez equipados com mais sensores,
+ocasionando em mais uma fonte de dado para a mesma informação. Um
+caso relevante neste trabalho, é a odometria do robô, que pode ser
+estimada por diversos tipos de sensores, com diferentes
+características. Ao invés de utilizar apenas um sensor para estimar a
+odometria, os dados destes sensores, munidos da informação de
+covariância do mesmo, podem ser fundidos obtendo uma estimativa mais
+precisa. O filtro de Kalman, introduzido em \textcite{KalmanFilter},
+é um estimador linear recursivo, comumente utilizado para aplicações
+deste tipo ~\cite{KalmanFilterMultisensor}. \todo{COLOCAR AS FONTES}
+
+Um exemplo de aplicação deste filtro para estimativa de posição no
+ROS 2 é o pacote
+\texttt{robot\_localization}~\cite{robot_localization_paper}. Este
+pacote permite um número ilimitado de entrada de dados de sensores, e
+tem suporte para diversos tipos de sensores, através da utilização de
+diversos tipos de mensagens do ROS. Além disso, é possível configurar
+os dados que serão utilizados de cada sensor, podendo ser excluídos
+dados que não são relevantes ou confiáveis do resultado final.
+
 \section{Mapeamento}
 
 Para navegação autônoma, o robô deve ter conhecimento prévio do
@@ -270,7 +298,7 @@ que permite a criação de mapas para ambientes pouco ou não conhecidos.
     criar subsection com as camadas estática, obstaculo e inflação,
     que foram usadas no trabalho
 
-    também PRECISO mencionar o STVL porque mencionei ele na discussao }
+    também preciso mencionar o STVL porque mencionei ele na discussao }
 
 Um mapa de custo é uma representação de ambiente composta por uma
 grade de células que contém um valor, variando de desconhecido,
@@ -848,6 +876,11 @@ mapa de custo. Desta forma, são criadas trajetórias que passam no
 meio de obstáculos, mantendo a maior distância possível entre o robô
 e possíveis colisões.
 
+\todo[inline]{
+    daria pra fazer uma tabela igual ao dos sistemas de odometria
+    e localizacao, só que cada linha é uma camada do mapa de custo
+}
+
 \subsection{Mapeamento SLAM}
 
 O mapeamento realizado pelo sistemas SLAM é utilizado apenas para a
@@ -1090,7 +1123,7 @@ mostrado a seguir. Este desempenho pode não ser replicado em
 ambientes reais, devido ao ruído presente fora da simulação.
 
 \begin{figure}[h]
-    \caption{Sistemas de odometria}
+    \caption{Posição estimada dos sistemas de odometria}
     \label{fig:odom}
     \begin{subfigure}{0.5\linewidth}
         {
@@ -1107,6 +1140,29 @@ ambientes reais, devido ao ruído presente fora da simulação.
             \caption{Odometria visual.}
             \label{fig:odom_visual}
             \includegraphics[width=0.98\linewidth]{odom-visual.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+\end{figure}
+
+\begin{figure}[h]
+    \caption{Erro dos sistemas de odometria}
+    \label{fig:odom_error}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Odometria das rodas.}
+            \label{fig:odom_controller_error}
+            \includegraphics[width=0.98\linewidth]{odom-controlador-error.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Odometria visual.}
+            \label{fig:odom_visual_error}
+            \includegraphics[width=0.98\linewidth]{odom-visual-error.png}\\
         }
         % {\sourcecitation{Autor}.}
     \end{subfigure}
@@ -1129,7 +1185,7 @@ estimativa da posição em comparação com a odometria, porém o
 estimativa mais próxima da posição real do robô.
 
 \begin{figure}[h]
-    \caption{Sistemas de localização}
+    \caption{Estimativa de posição dos sistemas de localização}
     \label{fig:localization}
     \begin{subfigure}{0.5\linewidth}
         {
@@ -1161,6 +1217,29 @@ capacidade de processamento, este problema foi mais evidente. Os
 algoritmos de SLAM também sofreram este problema. Portanto, em
 máquinas mais potentes, a estimativa de posição pode ser mais
 precisa.
+
+\begin{figure}[h]
+    \caption{Erro de posição dos sistemas de localização}
+    \label{fig:localization_error}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Pacote \texttt{rtabmap\_slam}.}
+            \label{fig:localization_rtabmap_error}
+            \includegraphics[width=0.98\linewidth]{localization-rtabmap-error.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Pacote \texttt{slam\_toolbox}.}
+            \label{fig:localization_slam_toolbox_error}
+            \includegraphics[width=0.98\linewidth]{localization-slam-toolbox-error.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+\end{figure}
 
 \section{Mapeamento SLAM}
 
