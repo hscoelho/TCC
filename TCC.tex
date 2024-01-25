@@ -985,6 +985,18 @@ das mensagens do tipo
 a posição global do robô calculada por estes pacotes, ou seja, a
 transformada entre \texttt{map}, \texttt{odom} e \texttt{base\_link}.
 
+O \texttt{Plotjuggler} permite a utilização de programas escritos em
+Lua para manipulação dos dados. Aproveitando isto, é possível
+calcular o erro de posição entre a posição real e a posição
+estimação, conforme a Equação \ref{eq:erro_posicao}, e criar um
+gráfico com o erro de posição ao longo da distância real percorrida
+pelo robô.
+
+\begin{equation}
+    \label{eq:erro_posicao}
+    erro_d = \sqrt{(x_{real} - x_{estimado})^2 + (y_{real} - y_{estimado})^2}
+\end{equation}
+
 \chapter{Resultados}
 \label{resultados}
 
@@ -1065,7 +1077,7 @@ com que certos corredores fossem evitados.
     \end{subfigure}
 \end{figure}
 
-\section{Odometria e localização}
+\section{Testes de odometria, localização e mapeamento SLAM}
 
 O testes de odometria, localização e mapeamento SLAM foram realizados
 na mesma sacola de dados, como descrito na seção \ref{met:testes},
@@ -1079,6 +1091,7 @@ realizado neste teste começa na origem, segue em direção a porta no
 canto superior direto da sala, percorre o corredor e entra na
 primeira sala. É possível comparar a percepção de diferentes
 ambientes neste teste, como em corredores estreitos e salas abertas.
+A distância total percorrida pelo robô foi de $13,08~\si{\meter}$.
 
 Devido ao tamanho da sacola de dados em razão da captura das imagens
 da câmera, não foi possível realizar uma simulação longa, que
@@ -1096,39 +1109,41 @@ mapeamento de sistemas SLAM.
     % {\sourcecitation{Autor}.}
 \end{figure}
 
+\subsection{Odometria}
+
 Após o fim da simulação e captura de dados, foram executados os
 sistemas de odometria na sacola gerada. Neste teste, utilizou-se a
 transformada estática entre os sistemas de coordenadas \texttt{map} e
-\texttt{odom}, para comparar a odometria das rodas e visual. Na
-Figura \ref{fig:odom}, são mostrados as estimativas da posição do
-robô nos eixos X e Y em relação a origem do sistema de coordenadas
-\texttt{map} dos dois sistemas de odometria em verde, comparados com
-a posição real do robô em vermelho.
+\texttt{odom}, para comparar a odometria das rodas e visual. A partir
+dos dados obtidos, foram criados gráficos com as estimativas da
+posição do robô nos eixos X e Y em relação a origem do sistema de
+coordenadas \texttt{map} dos sistemas de odometria em verde,
+comparados com a posição real do robô em vermelho, e gráficos com o
+erro de estimativa de posição ao longo da distância percorrida.
 
-A odometria das rodas, mostrada na Figura \ref{fig:odom_controller},
-mostra grande divergência em relação a posição real do robô, com essa
-divergência enviesada para a direita. Este resultado não é esperado,
-e indica alguma falha no sistema de odometria das rodas, podendo ser
-causada pela descrição do robô. \todo{acho que seria uma boa
-    referenciar um artigo que diga a divergencia esperada da odometria
-    das rodas}
+A odometria das rodas, mostrada na Figura
+\ref{fig:controller_odom_result}, apresentou uma grande divergência
+em relação a posição real do robô, com a curva da posição estimada
+inclinada para a direita, em relação a curva da posição real, como
+mostra a Figura \ref{fig:odom_controller}, indicando um erro na
+estimativa da orientação do robô.
 
-Por outro lado, a odometria visual, mostrada na Figura
-\ref{fig:odom_visual}, apresentou um resultado satisfatório. Existe
-uma divergência ao longo do tempo, além de um erro significativo na
-última curva da trajetória, estimando um caminho com alto ruído.
-Porém, esta odometria apresentou desempenho satisfatório para
-utilização em conjuntos com os testes dos sistemas de SLAM, como será
-mostrado a seguir. Este desempenho pode não ser replicado em
-ambientes reais, devido ao ruído presente fora da simulação.
+O erro de orientação, quando é causado, se transforma em erros de
+posição lateral e aumentam sem limite. Na primeira parte do trajeto,
+da origem até a primeira porta, a orientação estimada divergiu
+constantemente, causando uma curva exponencial do erro, como é visto
+na Figura \ref{fig:odom_controller_error}. Este erro continuou
+crescendo até o final do trajeto, causando uma grande divergência na
+posição final, com uma distância de $6,8~\si{\meter}$ entre a posição
+real e a estimada.
 
 \begin{figure}[h]
-    \caption{Posição estimada dos sistemas de odometria}
-    \label{fig:odom}
+    \caption{Resultado da odometria das rodas.}
+    \label{fig:controller_odom_result}
     \begin{subfigure}{0.5\linewidth}
         {
             \centering
-            \caption{Odometria das rodas.}
+            \caption{Posição estimada da odometria das rodas.}
             \label{fig:odom_controller}
             \includegraphics[width=0.98\linewidth]{odom-controlador.png}\\
         }
@@ -1137,30 +1152,43 @@ ambientes reais, devido ao ruído presente fora da simulação.
     \begin{subfigure}{0.5\linewidth}
         {
             \centering
-            \caption{Odometria visual.}
-            \label{fig:odom_visual}
-            \includegraphics[width=0.98\linewidth]{odom-visual.png}\\
-        }
-        % {\sourcecitation{Autor}.}
-    \end{subfigure}
-\end{figure}
-
-\begin{figure}[h]
-    \caption{Erro dos sistemas de odometria}
-    \label{fig:odom_error}
-    \begin{subfigure}{0.5\linewidth}
-        {
-            \centering
-            \caption{Odometria das rodas.}
+            \caption{Erro de estimativa da odometria das rodas.}
             \label{fig:odom_controller_error}
             \includegraphics[width=0.98\linewidth]{odom-controlador-error.png}\\
         }
         % {\sourcecitation{Autor}.}
     \end{subfigure}
+\end{figure}
+
+Por outro lado, a odometria visual, mostrada na Figura
+\ref{fig:odom_visual}, apresentou um resultado satisfatório. No
+gráfico da posição estimada, da Figura \ref{fig:odom_visual}, mostra
+que ocorreu a mesma inclinação para a direita que a odometria das
+rodas, porém menos acentuada. Como este gráfico não tem informação
+sobre o tempo, em certos da trajetória no corredor, a posição
+estimada parece estar igual a posição real, porém, na Figura
+\ref{fig:odom_visual_error}, é possível perceber que o erro de
+estimativa cresceu ao longo deste trajeto, atingindo um erro de
+$0,5~\si{\meter}$ no pico. Este erro diminuiu enquanto o robô
+percorria a curva final, porém logo aumento novamente atingindo um
+erro de $0,66~\si{\meter}$ no final do trajeto.
+
+\begin{figure}[h]
+    \caption{Resultado da odometria visual.}
+    \label{fig:visual_odom_result}
     \begin{subfigure}{0.5\linewidth}
         {
             \centering
-            \caption{Odometria visual.}
+            \caption{Posição estimada da odometria visual.}
+            \label{fig:odom_visual}
+            \includegraphics[width=0.98\linewidth]{odom-visual.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Erro de estimativa da odometria visual.}
             \label{fig:odom_visual_error}
             \includegraphics[width=0.98\linewidth]{odom-visual-error.png}\\
         }
@@ -1168,29 +1196,32 @@ ambientes reais, devido ao ruído presente fora da simulação.
     \end{subfigure}
 \end{figure}
 
-Na Figura \ref{fig:localization}, são mostrados os resultados dos
-sistemas de localização em conjunto com a odometria visual. Em
-vermelho está a posição real do robô, no eixos X e Y, e em verde a
-posição estimada pela odometria visual, como nos gráficos anteriores.
-Em azul, está a posição global estimada pelo sistema de localização,
-que é obtida através da transformada entre os sistemas de coordenadas
-\texttt{map}, \texttt{odom} e \texttt{base\_link}.
+\subsection{Localização}
 
-A Figura \ref{fig:localization_rtabmap} mostra o resultado do sistema
-de localização do pacote \texttt{rtabmap\_slam}, e a Figura
-\ref{fig:localization_slam_toolbox} do pacote \texttt{slam\_toolbox}.
-É possível perceber que ambos sistemas de localização melhoraram a
-estimativa da posição em comparação com a odometria, porém o
-\texttt{slam\_toolbox} apresentou um desempenho melhor, com uma
-estimativa mais próxima da posição real do robô.
+Como a odometria visual apresentou um resultado satisfatório, ela foi
+utilizada em conjunto com os sistemas de localização, onde será
+testado o ajuste dos erros de odometria pelo sistema de localização.
+Portanto, foram criados novos gráficos, adicionando a posição global
+estimada pelos sistemas de localização, em azul. Esta posição é
+obtida através da transformada entre \texttt{map}, \texttt{odom} e
+\texttt{base\_link}.
+
+A Figura \ref{fig:rtabmap_slam_result} mostra o resultado do sistema
+de localização do pacote \texttt{rtabmap\_slam}. A localização neste
+caso teve um ajuste bem pequeno, diminuindo o erro para
+$0,63~\si{\meter}$ no pico na posição final. É possível perceber pelo
+gráfico da Figura \ref{fig:localization_rtabmap_error} que a curva do
+erro manteve uma forma semelhante a curva do erro da odometria
+visual. Porém, houve menos ruído na estimativa de posição, como
+mostra a Figura \ref{fig:localization_rtabmap}.
 
 \begin{figure}[h]
-    \caption{Estimativa de posição dos sistemas de localização}
-    \label{fig:localization}
+    \caption{Resultado do pacote \texttt{rtabmap\_slam}.}
+    \label{fig:rtabmap_slam_result}
     \begin{subfigure}{0.5\linewidth}
         {
             \centering
-            \caption{Pacote \texttt{rtabmap\_slam}.}
+            \caption{Posição estimada do \texttt{rtabmap\_slam}.}
             \label{fig:localization_rtabmap}
             \includegraphics[width=0.98\linewidth]{localization-rtabmap.png}\\
         }
@@ -1199,9 +1230,43 @@ estimativa mais próxima da posição real do robô.
     \begin{subfigure}{0.5\linewidth}
         {
             \centering
-            \caption{Pacote \texttt{slam\_toolbox}.}
+            \caption{Erro de estimativa do \texttt{rtabmap\_slam}.}
+            \label{fig:localization_rtabmap_error}
+            \includegraphics[width=0.98\linewidth]{localization-rtabmap-error.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+\end{figure}
+
+O \texttt{slam\_toolbox}, que têm seu resultado representado na
+Figura \ref{fig:slam_toolbox_result}, por outro lado, apresentou um
+resultado melhor, diminuindo o erro de estimativa para
+aproximadamente $0,37~\si{\meter}$ no final da trajetória. Isto
+aconteceu em grande parte porque não houve o acumulo de erro durante
+o trajeto do corredor, como mostra a Figura
+\ref{fig:localization_slam_toolbox_error}, que havia acontecido na
+odometria visual. A Figura \ref{fig:localization_slam_toolbox} mostra
+que o ruído na estimativa de posição foi atenuado da mesma forma que
+o \texttt{rtabmap\_slam}.
+
+\begin{figure}[h]
+    \caption{Resultado do pacote \texttt{slam\_toolbox}.}
+    \label{fig:slam_toolbox_result}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Posição estimada do \texttt{slam\_toolbox}.}
             \label{fig:localization_slam_toolbox}
             \includegraphics[width=0.98\linewidth]{localization-slam-toolbox.png}\\
+        }
+        % {\sourcecitation{Autor}.}
+    \end{subfigure}
+    \begin{subfigure}{0.5\linewidth}
+        {
+            \centering
+            \caption{Erro de estimativa do \texttt{slam\_toolbox}.}
+            \label{fig:localization_slam_toolbox_error}
+            \includegraphics[width=0.98\linewidth]{localization-slam-toolbox-error.png}\\
         }
         % {\sourcecitation{Autor}.}
     \end{subfigure}
@@ -1218,30 +1283,7 @@ algoritmos de SLAM também sofreram este problema. Portanto, em
 máquinas mais potentes, a estimativa de posição pode ser mais
 precisa.
 
-\begin{figure}[h]
-    \caption{Erro de posição dos sistemas de localização}
-    \label{fig:localization_error}
-    \begin{subfigure}{0.5\linewidth}
-        {
-            \centering
-            \caption{Pacote \texttt{rtabmap\_slam}.}
-            \label{fig:localization_rtabmap_error}
-            \includegraphics[width=0.98\linewidth]{localization-rtabmap-error.png}\\
-        }
-        % {\sourcecitation{Autor}.}
-    \end{subfigure}
-    \begin{subfigure}{0.5\linewidth}
-        {
-            \centering
-            \caption{Pacote \texttt{slam\_toolbox}.}
-            \label{fig:localization_slam_toolbox_error}
-            \includegraphics[width=0.98\linewidth]{localization-slam-toolbox-error.png}\\
-        }
-        % {\sourcecitation{Autor}.}
-    \end{subfigure}
-\end{figure}
-
-\section{Mapeamento SLAM}
+\subsection{Mapeamento SLAM}
 
 Como mencionado anteriormente, os dois sistemas de localização
 utilizados realizam o mapeamento simultaneamente com a localização.
@@ -1339,19 +1381,16 @@ ruído presente fora da simulação.
 
 \todo[inline] {
     acho que deveria reescrever o paragrafo seguinte.
-    
+
     sobre os erros da odometria da roda: doi:10.1109/70.544770
 
-    isso pode ser usado para explicar a diminuição do erro usando o 
-    imu: 
-    Finally, we note that to reduce overall odometry errors, 
-orientation errors are the main source of concern because once 
-they are incurred they grow without bound into lateral position 
-errors [14], [19].
+    isso pode ser usado para explicar a diminuição do erro usando o imu:
+    Finally, we note that to reduce overall odometry errors, orientation
+    errors are the main source of concern because once they are incurred
+    they grow without bound into lateral position errors [14], [19].
 
-    também eu poderia fazer um gráfico do erro, parece que o erro
-    da odometria das rodas é sistemático
-}
+    também eu poderia fazer um gráfico do erro, parece que o erro da
+    odometria das rodas é sistemático }
 
 Logo, em trabalhos futuros, recomenda-se ajustes no sistema de
 odometria das rodas, para garantir uma estimativa mais precisa da
