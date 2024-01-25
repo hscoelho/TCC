@@ -255,6 +255,41 @@ ocasionando um longo tempo entre estimativas. Percebe-se que estes
 sensores, portanto, são ideias para publicação da transformada entre
 \texttt{map} e \texttt{odom}.
 
+\section{Localização e Mapeamento Simultâneo (SLAM)}
+\todo{acho que seria bom explicar melhor como funciona o slam, mencionando
+    o loop closure}
+
+Um campo de pesquisa importante na robótica móvel é o de localização
+e mapeamento simultâneo~(SLAM). Introduzido em
+~\textcite{slam_intro}, onde foi apresentado um método a partir de um
+algoritmo baseado em um filtro de Kalman estendido, hoje aplicações
+modernas utilizam técnicas baseadas em grafos, como detalhado em
+\textcite{graph_slam}.
+
+Entre pacotes que implementam o algoritmo baseado em grafos se
+destacam o SLAM Toolbox e o Cartographer. Porém, o Cartographer foi
+abandonado pelo Google e não é mais atualizado. O SLAM Toolbox, por
+outro lado, foi escolhido como o pacote padrão de SLAM para o ROS 2,
+e oferece diversas melhoras em relação a sistemas de SLAM anteriores,
+como o GMapping, Karto, Hector e o próprio Cartographer. Estes
+pacotes utilizam sensores em duas dimensões, sendo sensores baseados
+em varrimento a laser os mais populares~\cite{SensorAndSLAM}.
+
+Porém, com o avanço da tecnologia, sensores Red Green Blue -
+Depth~(RGB-D) e câmeras estéreo estão se tornando mais acessíveis,
+influenciando o desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
+Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e
+RTABMap, que possuem suporte a câmeras RGB-D e permitem localização
+pura.
+
+Em \textcite{VSLAM}, é feita uma comparação entre estes sistemas,
+mostrando que o OpenVSLAM é a técnica mais adequada para maioria dos
+casos. Dos pacotes citados neste artigo, apenas o RTABMap continua
+sendo desenvolvido ativamente, com suporte as versões mais recentes
+do ROS 2. Porém, novos sistemas de VSLAM promissores estão sendo
+desenvolvidos, como o NVidia Isaac ROS VSLAM e o StellaROS, que é um
+sucessor do OpenVSLAM.
+
 \section{Fusão de dados de sensores}
 
 Robôs modernos estão cada vez equipados com mais sensores,
@@ -266,7 +301,7 @@ odometria, os dados destes sensores, munidos da informação de
 covariância do mesmo, podem ser fundidos obtendo uma estimativa mais
 precisa. O filtro de Kalman, introduzido em \textcite{KalmanFilter},
 é um estimador linear recursivo, comumente utilizado para aplicações
-deste tipo ~\cite{KalmanFilterMultisensor}. \todo{COLOCAR AS FONTES}
+deste tipo.
 
 Um exemplo de aplicação deste filtro para estimativa de posição no
 ROS 2 é o pacote
@@ -277,23 +312,8 @@ diversos tipos de mensagens do ROS. Além disso, é possível configurar
 os dados que serão utilizados de cada sensor, podendo ser excluídos
 dados que não são relevantes ou confiáveis do resultado final.
 
-\section{Mapeamento}
-
-Para navegação autônoma, o robô deve ter conhecimento prévio do
-ambiente para planejamento de trajetórias. Existem diversas formas de
-representação do ambiente, como mapas de gradientes, mapas de custo e
-vetores de espaços. Neste trabalho, o foco será no mapa de custo.
-
-O mapeamento também auxilia na localização do robô, comparando o mapa
-construído com os dados dos sensores em tempo real. Além disso, os
-dados dos sensores podem ser utilizados para atualizar o mapa de
-custo, em casos de ambientes pouco conhecidos ou dinâmicos.
-
-É possível utilizar os dados de localização e dos sensores para construir um novo mapa.
-Esta técnica é conhecida como \textit{Simultaneous Localization and Mapping~(SLAM)},
-que permite a criação de mapas para ambientes pouco ou não conhecidos.
-
 \section{Mapas de custo}
+
 \todo[inline]{
     criar subsection com as camadas estática, obstaculo e inflação,
     que foram usadas no trabalho
@@ -328,37 +348,6 @@ mapas de custo. \todo[inline]{Laranja pediu mais referencias nessa
     }
     {\sourcecitation{Adaptado de \textcite{layered_costmaps}.}}
 \end{figure}
-
-\section{Sensores e SLAM}
-
-\todo[inline]{deveria ser uma seção só pra slam e vslam}
-
-A escolha do sensor é importante para o mapeamento, pois afeta a
-qualidade e quantidade de informações obtidas pelo robô, além de
-determinar a escolha das ferramentas utilizadas para o mapeamento do
-ambiente~\cite{SensorAndSLAM}.
-
-Sensores acústicos, como sonares e sensor de óticos, são utilizados
-em ferramentas SLAM 2D tradicionais. Estes sistemas são robustos e
-bem estabelecidos, com fácil integração ao sistema de navegação do
-ROS 2.
-
-Porém, com o avanço da tecnologia, sensores Red Green Blue -
-Depth~(RGB-D) e câmeras estéreo estão se tornando mais acessíveis,
-influenciando o desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
-Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e
-RTABMap, que possuem suporte a câmeras RGB-D e permitem localização
-pura. Em \textcite{VSLAM}, é feita uma comparação entre estes
-sistemas, mostrando que o OpenVSLAM é a técnica mais adequada para
-maioria dos casos. Contudo, para ambientes internos com câmeras
-RGB-D, o RTABMap também teve um bom desempenho. Estes sistemas,
-porém, não são integrados nativamente ao \textit{Navigation2}.
-
-\todo{Falar mais do slam/vslam eu acho}
-% TODO: Procurar artigos mais novos sobre VSLAM (o referenciado ta na pagina
-% do nav2, mas parece estar desatualizado...)
-% O NVidia Isaac ROS VSLAM e o StellaROS(parece que é uma continuacao do OpenVSLAM)
-% parecem promissores...
 
 \section{Navigation2}
 
@@ -1128,14 +1117,15 @@ inclinada para a direita, em relação a curva da posição real, como
 mostra a Figura \ref{fig:odom_controller}, indicando um erro na
 estimativa da orientação do robô.
 
-O erro de orientação, quando é causado, se transforma em erros de
-posição lateral e aumentam sem limite. Na primeira parte do trajeto,
-da origem até a primeira porta, a orientação estimada divergiu
-constantemente, causando uma curva exponencial do erro, como é visto
-na Figura \ref{fig:odom_controller_error}. Este erro continuou
-crescendo até o final do trajeto, causando uma grande divergência na
-posição final, com uma distância de $6,8~\si{\meter}$ entre a posição
-real e a estimada.
+O erro de orientação é especialmente indesejado porque, quando é
+causado, se transforma em erro de posição lateral e aumenta sem
+limite\cite{borenstein}. Na primeira parte do trajeto, da origem até
+a primeira porta, a orientação estimada divergiu constantemente,
+causando uma curva exponencial do erro, como é visto na Figura
+\ref{fig:odom_controller_error}. Este erro continuou crescendo até o
+final do trajeto, causando uma grande divergência na posição final,
+com uma distância de $6,8~\si{\meter}$ entre a posição real e a
+estimada.
 
 \begin{figure}[h]
     \caption{Resultado da odometria das rodas.}
@@ -1375,46 +1365,36 @@ localização do pacote \texttt{slam\_toolbox}.
 A escolha da odometria se da pelo desempenho superior da odometria
 visual em relação a odometria das rodas. Porém, a odometria das rodas
 apresentou um resultado pior do que o esperado, podendo ser causado
-por erros na descrição do robô. Além disso, a odometria visual pode
-apresentar resultados inferiores em ambientes reais, devido ao maior
-ruído presente fora da simulação.
-
-\todo[inline] {
-    acho que deveria reescrever o paragrafo seguinte.
-
-    sobre os erros da odometria da roda: doi:10.1109/70.544770
-
-    isso pode ser usado para explicar a diminuição do erro usando o imu:
-    Finally, we note that to reduce overall odometry errors, orientation
-    errors are the main source of concern because once they are incurred
-    they grow without bound into lateral position errors [14], [19].
-
-    também eu poderia fazer um gráfico do erro, parece que o erro da
-    odometria das rodas é sistemático }
+por erros na descrição do robô, o que pode ser ajustado. Além disso,
+a odometria visual pode apresentar resultados inferiores em ambientes
+reais, devido ao maior ruído presente fora da simulação, que foi
+feita em condições ideias.
 
 Logo, em trabalhos futuros, recomenda-se ajustes no sistema de
 odometria das rodas, para garantir uma estimativa mais precisa da
-posição do robô. Considerando o gráfico da Figura
-\ref{fig:odom_controller}, o problema da odometria pode estar
-relacionado a orientação do robô. Portanto, a odometria das rodas
-pode ser ajustada utilizando a informação de velocidade angular e
-orientação do robô. Para isto, deve ser ajustada a velocidade linear
-publicada na mensagem do tipo \texttt{nav\_msgs/Odometry} pela
-odometria das rodas. Esta velocidade deveria ser calculada em relação
-a base do robô, não em relação ao sistema de coordenadas
-\texttt{odom}, como é feito atualmente. Ajustando este dado, é
-possível utilizar o pacote \texttt{robot\_localization} para calcular
-a posição do robô utilizando a velocidade linear das rodas com a
-orientação do IMU, sem utilizar a posição calculada pelo
-\texttt{arc\_odometry}.
+posição do robô. Como discutido anteriormente, a odometria das rodas
+apresentou um erro substantivo na estimada de odometria, que é o erro
+mais preocupante da odometria. Para mitigar este erro, é possível
+utilizar as informações de velocidade angular e orientação do IMU
+presente no robô para calcular a estimativa de posição.
+
+Isto pode ser feito utilizando o pacote \texttt{robot\_localization},
+retirando a utilização de dados da posição dada pela mensagem
+publicada pela odometria das rodas. Desta forma, a posição do robô
+seria calculada utilizando a velocidade linear das rodas e a
+orientação do IMU, obtendo assim uma estimativa com menor erro.
+Porém, a velocidade publicada pela odometria das rodas deve ser
+modificada para ser em relação a base do robô, como é esperado pelo
+\texttt{robot\_localization}, e não em relação ao sistema de
+coordenadas \texttt{odom}, como é publicada atualmente.
 
 Com a odometria das rodas ajustada, ambos sistemas de odometria devem
-ser comparados. Em caso de desempenho semelhante, recomenda-se a
-utilização da odometria das rodas, por ser mais simples exigindo
-menor capacidade de computacional. Porém, caso a complexidade de
-processamento não seja um problema, ambas odometria podem ser
-utilizadas em conjunto, fundidas através de um filtro de Kalman para
-obter uma estimativa mais precisa da posição do robô.
+ser comparados novamente. Em caso de desempenho semelhante,
+recomenda-se a utilização da odometria das rodas, por ser mais
+simples exigindo menor capacidade de computacional. Porém, caso a
+complexidade de processamento não seja um problema, ambas odometria
+podem ser utilizadas em conjunto, fundidas através de um filtro de
+Kalman para obter uma estimativa mais precisa da posição do robô.
 
 Em relação ao mapeamento, o pacote \texttt{rtabmap\_slam} criou um
 mapa mais detalhado do ambiente, devido a utilização de dados
@@ -1424,11 +1404,6 @@ posição. Portanto, caso seja desejado um mapa do ambiente mais
 detalhado, recomenda-se a utilização do \texttt{rtabmap\_slam}, em
 uma sacola de dados, e não durante a navegação em tempo-real, da
 mesma forma que foi feito neste trabalho.
-
-\todo[inline]{
-    eu preciso mencionar ou aqui ou na conclusao que o
-    que nao foi testado o fechamento de laço
-}
 
 \chapter{Conclusão}
 \label{conclusao}
