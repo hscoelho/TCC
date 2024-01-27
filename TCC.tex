@@ -114,10 +114,21 @@ de modo a evitar colisões. \todo[inline]{Laranja disse que esta parte
 \end{figure}
 
 É neste contexto que se insere o projeto atual.
-Utilizando o robô Twil, é proposto um sistema de navegação autônomo que utiliza
+Utilizando o robô Twil, representado na Figura \ref{fig:robo_rviz},
+é proposto um sistema de navegação autônomo que utiliza
 sensores para mapear o ambiente em conjunto com algoritmos de planejamento
 de trajetórias para permitir a navegação sem colisões em ambientes previamente
 desconhecidos ou dinâmicos.
+
+\begin{figure}[h]
+    {
+        \centering
+        \caption{Modelo do robô utilizado.}
+        \label{fig:robo_rviz}
+        \includegraphics[width=0.3\textwidth]{robo_rviz.png}\\
+    }
+    % {\sourcecitation{Autor.}}
+\end{figure}
 
 Este robô já foi utilizado em trabalhos de conclusão de curso
 anteriores, como em \textcite{petry_tcc} e \textcite{rahul_tcc}.
@@ -132,17 +143,19 @@ em robôs móveis, que substituí o \textit{Navigation Stack} do ROS 1.
 Neste trabalho, será dado seguimento ao desenvolvimento anterior no
 Twil, com ajustes na odometria, além da adição de localização
 utilizando uma câmera de profundidade e mapeamento do ambiente para
-permitir a navegação autônoma em ambientes dinâmicos. Nos capítulos
-seguintes, é apresentado o embasamento teórico necessário para este
-desenvolvimento, além do planejamento da implementação deste sistema.
+permitir a navegação autônoma em ambientes dinâmicos. Isto é feito
+através da configuração de dois novos componentes, a câmera RGB-D
+Intel RealSense D435 e uma unidade de medida inercial~(IMU). A imagem
+da câmera é utilizada na odometria visual, na localização e no
+mapeamento do ambiente, enquanto que as informações de orientação do
+IMU são utilizadas para aprimorar a odometria do robô.
+
+O mapa do ambiente tanto para o planejamento de trajetórias quanto
+para a localização do robô. Como cada um destes sistemas tem
+requisitos diferentes, foram criados dois mapas independentes.
 
 \chapter{Revisão da Literatura}
 \label{revisao}
-
-\todo[inline]{
-    to refazendo essa parte, tirando o que nao foi usado
-    e adicionando mais info sobre o que foi usado
-}
 
 Neste capítulo são apresentados os conceitos necessários para o
 desenvolvimento do trabalho, como o Robot Operating System~(ROS) 2,
@@ -314,12 +327,6 @@ dados que não são relevantes ou confiáveis do resultado final.
 
 \section{Mapas de custo}
 
-\todo[inline]{
-    criar subsection com as camadas estática, obstaculo e inflação,
-    que foram usadas no trabalho
-
-    também preciso mencionar o STVL porque mencionei ele na discussao }
-
 Um mapa de custo é uma representação de ambiente composta por uma
 grade de células que contém um valor, variando de desconhecido,
 livre, ocupado ou custo inflado.
@@ -327,17 +334,18 @@ livre, ocupado ou custo inflado.
 Em mapas de custo tradicionais, seus dados são armazenadas em mapas
 monolíticos, para utilização em planejamento de trajetórias. Esta
 implementação é utilizada com sucesso para caminhos curtos, mas pode
-apresentar dificuldade em lidar com ambientes dinâmicos
-maiores~\cite{layered_costmaps}.
+apresentar dificuldade em lidar com ambientes dinâmicos maiores.
 
 Uma solução para este problema são mapas de custo com camadas, que
 separam o processamento dos dados dos mapas de custos em camadas
-semanticamente distintas. Por exemplo, os dados dos sensores e o mapa
-estático previamente conhecido são processados em camadas separadas e
-depois combinados em um único mapa de custo. A Figura
-\ref{fig:mapa_camadas} mostra uma configuração possível de camadas de
-mapas de custo. \todo[inline]{Laranja pediu mais referencias nessa
-    parte}
+semanticamente distintas~\cite{layered_costmaps}. Esta separação
+permite a utilização de diferentes fontes de dados, permitindo, por
+exemplo, adicionar dados de sensores para atualizar o mapa, sem
+modificar o mapa original. Outras camadas podem ser configuradas para
+evitar certas áreas, manter uma distância segura de obstáculos ou
+seguir para seguir regras culturais, como manter a direita em
+corredores. A Figura \ref{fig:mapa_camadas} mostra uma configuração
+possível de camadas de mapas de custo.
 
 \begin{figure}[h]
     {
@@ -348,6 +356,30 @@ mapas de custo. \todo[inline]{Laranja pediu mais referencias nessa
     }
     {\sourcecitation{Adaptado de \textcite{layered_costmaps}.}}
 \end{figure}
+
+Três destas camadas são essenciais para mapear ambientes dinâmicos: a
+camada estática, a camada de obstáculos e a camada de inflação. A
+camada estática tem o mapa base, que deve ter apenas obstáculos
+fixos, desta maneira, a trajetória planejada não será alterada em
+razão de objetos inexistentes.
+
+A camada de obstáculos é responsável por atualizar o mapa de custo
+com obstáculos dinâmicos, através de dados de sensores óticos. Uma
+opção desta camada é a camada \textit{voxel}, que utiliza uma
+representação em três dimensões dos dados dos sensores, introduzida
+em~\textcite{office_marathon}. Neste caso, é utilizado um espaço
+tridimensional, composto por blocos chamados de \textit{voxels}, que
+indicam se o bloco está ocupado ou livre. Cada coluna deste campo é
+então projetada em um mapa bidimensional, com o valor dependendo da
+presença de \textit{voxels} ocupados na mesma. Isto permite ao robô
+detectar obstáculos em diferentes alturas, atualizando o mapa apenas
+para obstáculos que podem colidir com o robô.
+
+A camada de inflação utiliza os dados das camadas abaixo dela para
+criar uma zona de segurança entre os obstáculos. Esta zona tem
+valores intermediários entre os valores de obstáculo e livre, criando
+trajetórias seguras mas que permitem que o robô passe próximo a
+obstáculos, caso necessário.
 
 \section{Navigation2}
 
@@ -490,20 +522,6 @@ como representado na Figura \ref{fig:robo_rviz}, e no Gazebo para
 simulação. Para a simulação dos componentes físicos do robô, como
 sensores e atuadores, são utilizados \textit{plugins} do Gazebo,
 também presentes no arquivo de descrição.
-
-\todo[inline]{
-    seria melhor apresentar uma imagem do robo antes, na introdução
-}
-
-\begin{figure}[h]
-    {
-        \centering
-        \caption{Modelo do robô no rviz.}
-        \label{fig:robo_rviz}
-        \includegraphics[width=0.3\textwidth]{robo_rviz.png}\\
-    }
-    % {\sourcecitation{Autor.}}
-\end{figure}
 
 Durante este trabalho, foram configurados dois novos componentes ao
 robô, a câmera RGB-D Intel RealSense D435 e um IMU. A câmera foi
@@ -748,7 +766,6 @@ o \texttt{rtabmap\_slam}, resumidos na Tabela \ref{tab:localizacao}.
             \hline
             \multirow{2}{*}{\texttt{rtabmap\_slam}} & \multirow{2}{*}{Câmera} & \texttt{sensor\_msgs/CameraInfo}                \\
                                                     &                         & \texttt{sensor\_msgs/Image}(RGB e profundidade) \\
-            \hline
         \end{tabular}
     \end{center}
 \end{table}
@@ -1151,12 +1168,12 @@ estimada.
 \end{figure}
 
 Por outro lado, a odometria visual, mostrada na Figura
-\ref{fig:odom_visual}, apresentou um resultado satisfatório. No
-gráfico da posição estimada, da Figura \ref{fig:odom_visual}, mostra
-que ocorreu a mesma inclinação para a direita que a odometria das
-rodas, porém menos acentuada. Como este gráfico não tem informação
-sobre o tempo, em certos da trajetória no corredor, a posição
-estimada parece estar igual a posição real, porém, na Figura
+\ref{fig:visual_odom_result}, apresentou um resultado satisfatório.
+No gráfico da posição estimada, da Figura \ref{fig:odom_visual},
+mostra que ocorreu a mesma inclinação para a direita que a odometria
+das rodas, porém menos acentuada. Como este gráfico não tem
+informação sobre o tempo, em certos da trajetória no corredor, a
+posição estimada parece estar igual a posição real, porém, na Figura
 \ref{fig:odom_visual_error}, é possível perceber que o erro de
 estimativa cresceu ao longo deste trajeto, atingindo um erro de
 $0,5~\si{\meter}$ no pico. Este erro diminuiu enquanto o robô
@@ -1353,8 +1370,8 @@ tridimensionais no ambiente, e uma camada de inflação, que cria uma
 zona de segurança ao redor dos obstáculos, o robô é capaz de evitar
 colisões. Este sistema pode ser aprimorado com a utilização de outras
 camadas do mapa de custo, como a camada \textit{Spatio Temporal Voxel
-    Layer}, que adiciona um decaimento temporal ao obstáculos detectados,
-já que eles possivelmente são temporários.
+    Layer}~\cite{stlv_article}, que adiciona um decaimento temporal ao
+obstáculos detectados, já que eles podem ser temporários.
 
 Além disso, a câmera aprimorou a estimativa de posição do robô, que
 permite o seguimento correto da trajetória planejada. A combinação de
@@ -1404,6 +1421,14 @@ posição. Portanto, caso seja desejado um mapa do ambiente mais
 detalhado, recomenda-se a utilização do \texttt{rtabmap\_slam}, em
 uma sacola de dados, e não durante a navegação em tempo-real, da
 mesma forma que foi feito neste trabalho.
+
+Além disso, devem ser realizados testes de SLAM que percorram um
+caminho que revisite áreas já vistas, para testar o fechamento de
+laço. Não foi possível testar isto neste trabalho, porque a execução
+da simulação em conjunto com os sistemas de odometria e localização
+exigiu muita capacidade de processamento, e as sacolas de dados, que
+permitem separar a execução destes sistemas, não são praticáveis em
+trajetórias longas, devido ao tamanho do arquivo gerado.
 
 \chapter{Conclusão}
 \label{conclusao}

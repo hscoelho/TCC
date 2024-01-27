@@ -145,6 +145,18 @@
   year    = {2020}
 }
 
+@inproceedings{office_marathon,
+  author    = {Marder-Eppstein, Eitan and Berger, Eric and Foote, Tully and Gerkey, Brian and Konolige, Kurt},
+  booktitle = {2010 IEEE International Conference on Robotics and Automation},
+  title     = {The Office Marathon: Robust navigation in an indoor office environment},
+  year      = {2010},
+  volume    = {},
+  number    = {},
+  pages     = {300-307},
+  keywords  = {Robustness;Orbital robotics;Robot sensing systems;Open source software;Mobile robots;Sensor arrays;Robotics and automation;USA Councils;Sonar navigation;Space technology},
+  doi       = {10.1109/ROBOT.2010.5509725}
+}
+
 @thesis{petry_tcc,
   title       = {Navegação de um robô móvel em ambiente semi-estruturado},
   author      = {Gabriel Rodrigues Petry},
@@ -270,7 +282,6 @@
   abstract = {This paper presents a comprehensive review on sensor modalities currently in used for solving the Simultaneous Localization and Mapping (SLAM) problem. The review focuses on SLAM for mobile robots in a variety of environments. The strengths and weaknesses of acoustic modality sensors such as ultrasonic and sonar sensors, laser range finders, visual sensors such as stereo vision sensors, and RGB-D sensors like the Microsoft Kinect and the Asus Xtion Pro Live are compared based on current usage in published research papers. Based on this review, we propose that RGB-D sensors have unique advantages which make them particularly suitable for SLAM problems.}
 }
 
-
 @article{slam_intro,
   author     = {Smith, Randall C. and Cheeseman, Peter},
   title      = {On the representation and estimation of spatial uncertainly},
@@ -307,6 +318,20 @@
   version   = {2.4.0},
   doi       = {10.5281/zenodo.4749721},
   url       = {https://doi.org/10.5281/zenodo.4749721}
+}
+
+@article{stlv_article,
+  author   = {Steve Macenski and David Tsai and Max Feinberg},
+  title    = {Spatio-temporal voxel layer: A view on robot perception for the dynamic world},
+  journal  = {International Journal of Advanced Robotic Systems},
+  volume   = {17},
+  number   = {2},
+  pages    = {1729881420910530},
+  year     = {2020},
+  doi      = {10.1177/1729881420910530},
+  url      = {https://doi.org/10.1177/1729881420910530},
+  eprint   = {https://doi.org/10.1177/1729881420910530},
+  abstract = {The spatio-temporal voxel grid is an actively maintained open-source project providing an improved three-dimensional environmental representation that has been garnering increased adoption in large, dynamic, and complex environments. We provide a voxel grid and the Costmap 2-D layer plug-in, Spatio-Temporal Voxel Layer, powered by a real-time sparse occupancy grid with constant time access to voxels which does not scale with the environment’s size. We replace ray-casting with a new clearing technique we dub frustum acceleration that does not assume a static environment and in practice, represents moving environments better. Our method operates at nearly 400\% less CPU load on average while processing 9 QVGA resolution depth cameras as compared to the voxel layer. This technique also supports sensors such as three-dimensional laser scanners, radars, and additional modern sensors that were previously unsupported in the available ROS Navigation framework that has become staples in the roboticists’ toolbox. These sensors are becoming more widely used in robotics as sensor prices are driven down and mobile compute capabilities improve. The Spatio-Temporal Voxel Layer was developed in the open with community feedback over its development life cycle and continues to have additional features and capabilities added by the community. As of February 2019, the Spatio-Temporal Voxel Layer is being used on over 600 robots worldwide in warehouses, factories, hospitals, hotels, stores, and libraries. The open-source software can be viewed and installed on its GitHub page at https://github.com/SteveMacenski/spatio\_temporal\_voxel\_layer.}
 }
 
 @misc{VSLAM,
