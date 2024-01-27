@@ -717,7 +717,8 @@ tipo de mensagem recebido por cada um.
 \end{table}
 \todo[inline]{
     a camera no rgbd odom usa dois topicos do do tipo image,
-    por isso que colocou (rgb e profundidade), mas achei que ficou estranho
+    por isso que coloquei "(rgb e profundidade)",
+    mas achei que ficou estranho
 
     talvez faça sentido colocar o tipo de mensagem image duas vezes e
     colocar rgb numa e profundidade na outra }
@@ -991,7 +992,7 @@ das mensagens do tipo
 a posição global do robô calculada por estes pacotes, ou seja, a
 transformada entre \texttt{map}, \texttt{odom} e \texttt{base\_link}.
 
-O \texttt{Plotjuggler} permite a utilização de programas escritos em
+O \textit{Plotjuggler} permite a utilização de programas escritos em
 Lua para manipulação dos dados. Aproveitando isto, é possível
 calcular o erro de posição entre a posição real e a posição
 estimação, conforme a Equação \ref{eq:erro_posicao}, e criar um
@@ -1000,7 +1001,7 @@ pelo robô.
 
 \begin{equation}
     \label{eq:erro_posicao}
-    erro_d = \sqrt{(x_{real} - x_{estimado})^2 + (y_{real} - y_{estimado})^2}
+    d_{erro} = \sqrt{(x_{real} - x_{estimado})^2 + (y_{real} - y_{estimado})^2}
 \end{equation}
 
 \chapter{Resultados}
@@ -1032,8 +1033,8 @@ $2,0~\si{\meter}$. Em razão do aumento da borda, a inclinação
 precisou ser ajustada para $4,0$, porque a inclinação original fazia
 com que certos corredores fossem evitados.
 % % LTeX: enable=true
-\todo[inline]{tem que ajustar as informaçoes da camada de inflacao que tao nos resultados
-    e as que tem na metodologia}
+\todo{tem que ver quais informacoes da inflacao eu coloco aqui e quais eu
+    coloco na metodologia}
 
 \begin{figure}[h]
     \caption{Trajetórias criadas com diferentes configurações da camada de inflação}
@@ -1057,12 +1058,19 @@ com que certos corredores fossem evitados.
     \end{subfigure}
 \end{figure}
 
-\todo[inline]{
-
-    explicar a camada voxel }
+Finalmente, foi testada a camada de obstáculos adicionada neste
+trabalho, que utiliza dados da câmera RGB-D para adicionar novos
+obstáculos no mapa, mostrado na Figura \ref{fig:voxel_test}. Para
+realizar este teste, foi adicionada uma caixa ao mundo do Gazebo,
+durante a simulação. Então, foi criada uma rota que passe por este
+obstáculo, como na Figura \ref{fig:voxel_before}. Ao se aproximar
+desta caixa, ela é detectada pela nuvem de pontos da câmera,
+representada como pontos brancos, e é adicionada ao mapa de custom,
+como é visto na Figura \ref{fig:voxel_after}.
 
 \begin{figure}[h]
     \caption{Mapeamento de obstáculos da camada \textit{voxel}}
+    \label{fig:voxel_test}
     \begin{subfigure}{0.5\linewidth}
         {
             \centering
@@ -1082,6 +1090,12 @@ com que certos corredores fossem evitados.
         % {\sourcecitation{Autor}.}
     \end{subfigure}
 \end{figure}
+
+Percebe-se nestas duas imagens, que caso fosse utilizada uma
+representação plana do ambiente, na altura da câmera, que pode ser
+visto em amarelo nas
+Figuras~\ref{fig:voxel_before}~e~\ref{fig:voxel_after}, o obstáculo
+não seria detectado, e o robô colidiria com a caixa.
 
 \section{Testes de odometria, localização e mapeamento SLAM}
 
@@ -1110,7 +1124,7 @@ mapeamento de sistemas SLAM.
         \centering
         \caption{Robô durante o teste realizado.}
         \label{fig:base_bag}
-        \includegraphics[width=0.9\textwidth]{base_bag_sim_zoom.png}\\
+        \includegraphics[width=0.95\textwidth]{base_bag_sim_zoom.png}\\
     }
     % {\sourcecitation{Autor}.}
 \end{figure}
@@ -1321,12 +1335,12 @@ em cinza são desconhecidas.
         \centering
         \caption{Mapa construído pelo \texttt{rtabmap\_slam}.}
         \label{fig:mapping_rtabmap}
-        \includegraphics[width=0.7\linewidth]{rtabmap_slam_map-compared.png}\\
+        \includegraphics[width=0.8\linewidth]{rtabmap_slam_map-compared.png}\\
     }
     % {\sourcecitation{Autor}.}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     {
         \centering
         \caption{Mapa construído pelo \texttt{slam\_toolbox}.}
