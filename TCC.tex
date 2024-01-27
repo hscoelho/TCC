@@ -1003,7 +1003,6 @@ pelo robô.
     erro_d = \sqrt{(x_{real} - x_{estimado})^2 + (y_{real} - y_{estimado})^2}
 \end{equation}
 
-
 \chapter{Resultados}
 \label{resultados}
 
@@ -1128,11 +1127,11 @@ coordenadas \texttt{map} dos sistemas de odometria em verde,
 comparados com a posição real do robô em vermelho, e gráficos com o
 erro de estimativa de posição ao longo da distância percorrida.
 
-Importante notar que os gráficos de erro de distância apresentam 
-um ruído aparente, devido a diferença de frequência de publicação
-das mensagens de posição real e estimativa de posição. Entre as 
-estimativas, o erro de distância aumenta, já que a posição real 
-é atualizada e a estimativa não.
+Importante notar que os gráficos de erro de distância apresentam um
+ruído aparente, devido a diferença de frequência de publicação das
+mensagens de posição real e estimativa de posição. Entre a geração de
+uma estimativa e outra, o erro de distância aumenta, já que a posição
+real é atualizada e a estimativa não.
 
 A odometria das rodas, mostrada na Figura
 \ref{fig:controller_odom_result}, apresentou uma grande divergência
