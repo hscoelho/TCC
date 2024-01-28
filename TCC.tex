@@ -258,8 +258,6 @@ estimativas. Percebe-se que estas duas características são
 semelhantes ao requisitos da publicação da transformada entre
 \texttt{map} e \texttt{odom}.
 
-\todo[inline]{amcl}
-
 Uma técnica comumente usada é a comparação de um mapa, obtido
 previamente, com dados de sensores óticos. A localização por Monte
 Carlo é uma das aplicações, mais comuns deste sistema. Nela, os
@@ -311,7 +309,7 @@ Na literatura, uma variedade de soluções para este problema estão
 disponíveis. Dentre eles, destaca-se o método baseado em um grafo de
 poses. O estado da arte atual, em relação a precisão e a velocidade
 da estimativa, de sistemas SLAM utilizam técnicas com base neste
-método\cite{graph_slam_tutorial}.
+método~\cite{graph_slam_tutorial}.
 
 %citar o artigo do graph slam
 
@@ -324,15 +322,19 @@ fechamento de laço; e otimização do grafo.
 
 A construção do grafo de poses é feita utilizando os dados extraídos
 dos sensores de odometria e percepção. Cada nó deste grafo consiste
-na posição estimada do robô, dada pela odometria, com as com as
-informações obtidas pelo sensor ótico, comumente em forma de
-\textit{features} da imagem. Após a adição de um nó, é feita a
-procura de candidatos para o fechamento de laço, comparando os dados
-deste nó com as \textit{features} de nós desconectados, ou seja, que
-não vem logo antes deste nó. Finalmente, levando em contas as
-restrições obtidas na construção do grafo, é realizada a otimização
-do caminho obtido, de forma a diminuir o erro da estimativa de
-posição.
+na posição estimada do robô, dada pela odometria, com as informações
+obtidas pelo sensor ótico, comumente em forma de \textit{features} da
+imagem.
+
+Após a adição de um nó, é feita a procura de candidatos para o
+fechamento de laço, comparando os dados deste nó com de nós
+desconectados, ou seja, nós que não foram criados recentemente na
+mesma rota. Desta forma, é possível detectar quando o robô retorna a
+uma posição já visitada anteriormente.
+
+Finalmente, levando em contas as restrições obtidas na construção do
+grafo, é realizada a otimização do caminho obtido, de forma a
+diminuir o erro da estimativa de posição.
 
 \subsection{Aplicações do SLAM no ROS}
 
