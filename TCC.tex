@@ -269,46 +269,103 @@ sensor ótico, o estado possível do robô é atualizado, sendo a
 partícula com maior probabilidade escolhida como a estimativa de
 posição do robô.
 
-Porém, em situações em que não há conhecimento prévio do ambiente,
-são necessários usar técnicas que realizam o mapeamento durante o
+Porém, em situações em que não há conhecimento prévio do ambiente, é
+necessário usar técnicas que realizam o mapeamento durante o
 deslocamento do robô.
 
 \section{Localização e Mapeamento Simultâneo (SLAM)}
 
-\todo[inline]{refazendo...}
+Quando não há um mapa do ambiente obtido a priori, é preciso
+construir este mapa durante a navegação. Neste caso, técnicas de
+localização e mapeamento simultâneo~(SLAM) são usadas.
 
-\subsection{Otimização de grafo de poses}
+Resolver o problema de SLAM envolve a estimação da trajetória do robô
+e do mapa do ambiente enquanto o robô se desloca. Ao longo da
+movimentação do robô em poses sequencias desconhecidas $x_{1:t} = {
+            x_1, x_2, ..., x_t }$ em uma mapa desconhecido $m$, são obtidas uma
+sequência de odometrias $u_{1:t} = {u_1, u_2, ..., u_t}$ e
+observações do ambiente $z_{1:t} = {z_1, z_2, ..., z_t}$. O problema
+SLAM requer a solução da distribuição de probabilidades dada pela
+Equação \ref{eq:slam_problem}, considerando que $x_0$ é a posição
+inicial do robô. Um modelo gráfico deste problema, em forma de uma
+rede de Bayes dinâmica, está representado na Figura
+\ref{fig:slam_algo}.
+% citar o artigo tutorial slam
 
-\subsection{Aplicações}
-% Um campo de pesquisa importante na robótica móvel é o de localização
-% e mapeamento simultâneo~(SLAM). Os primeiros algoritmos usavam
-% métodos baseados em filtros de Bayes\cite{probabilistic_robots},
-% porém aplicações modernas utilizam técnicas baseadas em grafos,
-%  como detalhado em \textcite{graph_slam}.
+\begin{equation}
+    \label{eq:slam_problem}
+    p(x_{1:t}, m | z_{1:t}, u_{1:t}, x_0)
+\end{equation}
 
-% Entre pacotes que implementam o algoritmo baseado em grafos se
-% destacam o SLAM Toolbox e o Cartographer. Porém, o Cartographer foi
-% abandonado pelo Google e não é mais atualizado. O SLAM Toolbox, por
-% outro lado, foi escolhido como o pacote padrão de SLAM para o ROS 2,
-% e oferece diversas melhoras em relação a sistemas de SLAM anteriores,
-% como o GMapping, Karto, Hector e o próprio Cartographer. Estes
-% pacotes utilizam sensores em duas dimensões, sendo sensores baseados
-% em varrimento a laser os mais populares~\cite{SensorAndSLAM}.
+\begin{figure}[h]
+    {
+        \centering
+        \caption{Modelo gráfico do problema do SLAM.}
+        \label{fig:slam_algo}
+        \includegraphics[width=0.8\textwidth]{graphic_slam_representation.png}\\
+    }
+    {\sourcecitation{\textcite{slam_tutorial_part_i}.}}
+\end{figure}
 
-% Porém, com o avanço da tecnologia, sensores Red Green Blue -
-% Depth~(RGB-D) e câmeras estéreo estão se tornando mais acessíveis,
-% influenciando o desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
-% Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e
-% RTABMap, que possuem suporte a câmeras RGB-D e permitem localização
-% pura.
+Na literatura, uma variedade de soluções para este problema estão
+disponíveis. Dentre eles, destaca-se o método baseado em um grafo de
+poses. O estado da arte atual, em relação a precisão e a velocidade
+da estimativa, de sistemas SLAM utilizam técnicas com base neste
+método\cite{graph_slam_tutorial}.
 
-% Em \textcite{VSLAM}, é feita uma comparação entre estes sistemas,
-% mostrando que o OpenVSLAM é a técnica mais adequada para maioria dos
-% casos. Dos pacotes citados neste artigo, apenas o RTABMap continua
-% sendo desenvolvido ativamente, com suporte as versões mais recentes
-% do ROS 2. Porém, novos sistemas de VSLAM promissores estão sendo
-% desenvolvidos, como o NVidia Isaac ROS VSLAM e o StellaROS, que é um
-% sucessor do OpenVSLAM.
+%citar o artigo do graph slam
+
+\subsection{SLAM baseado em grafo de poses}
+
+A aplicação do grafo de poses para mapeamento e localização
+geralmente consiste em quatro etapas: extração dos dados dos
+sensores; construção do grafo de poses; procura de candidatos a
+fechamento de laço; e otimização do grafo.
+
+A construção do grafo de poses é feita utilizando os dados extraídos
+dos sensores de odometria e percepção. Cada nó deste grafo consiste
+na posição estimada do robô, dada pela odometria, com as com as
+informações obtidas pelo sensor ótico, comumente em forma de
+\textit{features} da imagem. Após a adição de um nó, é feita a
+procura de candidatos para o fechamento de laço, comparando os dados
+deste nó com as \textit{features} de nós desconectados, ou seja, que
+não vem logo antes deste nó. Finalmente, levando em contas as
+restrições obtidas na construção do grafo, é realizada a otimização
+do caminho obtido, de forma a diminuir o erro da estimativa de
+posição.
+
+\subsection{Aplicações do SLAM no ROS}
+
+Entre pacotes que implementam o SLAM baseado em grafos se destacam o
+SLAM Toolbox e o Cartographer. Porém, o Cartographer foi
+descontinuado pelo Google e não é mais atualizado. O SLAM Toolbox,
+por outro lado, foi escolhido como o pacote padrão de SLAM para o ROS
+2~\cite{slam_toolbox_ros_standard}, e oferece diversas melhoras em
+relação a sistemas de SLAM anteriores, como o GMapping, Karto, Hector
+e o próprio Cartographer.
+
+Estes pacotes utilizam representações bidimensionais do ambiente,
+sendo sensores baseados em varrimento a laser a fonte de dado mais
+comum~\cite{SensorAndSLAM}. Porém, com o avanço da tecnologia,
+sensores Red Green Blue - Depth~(RGB-D) e câmeras estéreo estão se
+tornando mais acessíveis, influenciando o desenvolvimento de sistemas
+de Visual~SLAM~(VSLAM). Dentre sistemas de VSLAM, destacam-se o
+ORB-SLAM3, OpenVSLAM e RTABMap, que possuem suporte a câmeras RGB-D e
+permitem modos de localização pura.
+
+Neste modo, também presente no SLAM Toolbox, a localização é feita
+com um mapa base, obtido anteriormente, e com o estado atual do
+ambiente. Divergências entre o ambiente e o mapa base são tratados
+como obstáculos temporários, e não modificam permanentemente o mapa
+original.
+
+Em \textcite{VSLAM}, é feita uma comparação entre sistemas VSLAM,
+mostrando que o OpenVSLAM é a técnica mais adequada para maioria dos
+casos. Dos pacotes citados neste artigo, apenas o RTABMap continua
+sendo desenvolvido ativamente, com suporte às versões mais recentes
+do ROS 2. Porém, novos sistemas de VSLAM promissores estão sendo
+desenvolvidos, como o NVidia Isaac ROS VSLAM e o StellaROS, que é um
+sucessor do OpenVSLAM.
 
 \section{Fusão de dados de sensores}
 
