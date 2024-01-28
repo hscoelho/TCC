@@ -79,19 +79,20 @@ A robótica deve seu maior sucesso à indústria de manufatura, onde são
 utilizados principalmente robôs
 manipuladores~\cite{IntroductionToMobileRobots}. Porém, esses robôs
 têm como limitação sua mobilidade, incapazes de se movimentar pela
-planta, limitando suas tarefas a um espaço fixo. Um robô móvel, por
-outro lado, é capaz de se mover pelo seu ambiente de trabalho,
+planta, restringindo suas tarefas a um espaço fixo. Um robô móvel,
+por outro lado, é capaz de se mover pelo seu ambiente de trabalho,
 aumentando a gama de tarefas que podem ser realizadas.
 
 O mercado desta categoria de robô está em crescimento, como mostra a
 Figura~\ref{fig:mercado_robo}. Estes robôs podem ser utilizados em
 ambientes internos, como hospitais, fábricas ou em centros de
-distribuição, como o robô Proteus, da Amazon~\cite{amazon_robot}.
-Eles tem como desafio a navegação em ambientes dinâmicos, muitas
-vezes compartilhados com humanos. Portanto, é necessária a capacidade
-de perceber seu ambiente e replanejar sua trajetória em tempo real,
-de modo a evitar colisões. \todo[inline]{Laranja disse que esta parte
-    ficou meio enrolada}
+distribuição, como o Proteus, o primeiro robô autônomo da
+Amazon~\cite{amazon_robot}. Eles têm como desafio a navegação em
+espaços dinâmicos, muitas vezes compartilhados com humanos. Portanto,
+é necessária a capacidade de perceber seu ambiente e replanejar sua
+trajetória em tempo real, de modo a evitar colisões.
+
+\todo[inline]{Laranja disse que esta parte ficou meio enrolada}
 
 \begin{figure}[htbp]
     {
@@ -105,10 +106,11 @@ de modo a evitar colisões. \todo[inline]{Laranja disse que esta parte
 
 É neste contexto que se insere o projeto atual.
 Utilizando o robô Twil, representado na Figura \ref{fig:robo_rviz},
-é proposto um sistema de navegação autônomo que utiliza
-sensores para mapear o ambiente em conjunto com algoritmos de planejamento
-de trajetórias para permitir a navegação sem colisões em ambientes previamente
+é proposto um sistema de navegação autônomo com sensores
+que mapeiam o ambiente em conjunto com algoritmos de planejamento
+de trajetórias, permitindo a navegação sem colisões em ambientes previamente
 desconhecidos ou dinâmicos.
+\todo{tentar separar essa frase em duas}
 
 \begin{figure}[h]
     {
@@ -123,45 +125,46 @@ desconhecidos ou dinâmicos.
 Este robô já foi utilizado em trabalhos de conclusão de curso
 anteriores, como em \textcite{petry_tcc} e \textcite{rahul_tcc}.
 Porém, devido ao avanço do campo da robótica, ferramentas utilizadas
-nesses trabalhos foram substituídas por novas versões, que
-implementam técnicas modernas que serão abordadas ao longo do
-trabalho. É o caso do ROS 2, sucessor do ROS 1, que é uma coleção de
-bibliotecas e ferramentas para desenvolvimento de robôs, e do
-\textit{Navigation 2}, um pacote para implementar navegação autônoma
-em robôs móveis, que substituí o \textit{Navigation Stack} do ROS 1.
+nesses trabalhos foram substituídas por versões atualizadas. É o caso
+do ROS 2, sucessor do ROS 1, que é uma coleção de bibliotecas e
+ferramentas para desenvolvimento de robôs, e do \textit{Navigation
+    2}, um pacote para implementar navegação autônoma em robôs móveis,
+que substituí o \textit{Navigation Stack} do ROS 1. Estas novas
+versões aprimoram certos aspectos, como a segurança no caso do ROS, e
+utilizam técnicas mais modernas, como o uso de árvores de
+comportamento no \textit{Navigation 2}.
 
 Neste trabalho, será dado seguimento ao desenvolvimento anterior no
-Twil, com ajustes na odometria, além da adição de localização
-utilizando uma câmera de profundidade e mapeamento do ambiente para
-permitir a navegação autônoma em ambientes dinâmicos. Isto é feito
-através da configuração de dois novos componentes, a câmera RGB-D
-Intel RealSense D435 e uma unidade de medida inercial~(IMU). A imagem
-da câmera é utilizada na odometria visual, na localização e no
-mapeamento do ambiente, enquanto que as informações de orientação do
-IMU são utilizadas para aprimorar a odometria do robô.
+Twil, a partir da adição e configuração de novos sensores, como a
+câmera RGB-D Intel RealSense D435 e uma unidade de medida
+inercial~(IMU). A câmera é responsável pela a percepção do ambiente,
+que cria um mapa do ambiente, usado tanto na estimativa de posição do
+robô, quanto no planejamento de trajetórias. A IMU, por sua vez, é
+utilizado como um sensor auxiliar, que aprimora a odometria do robô
+através de dados de orientação e velocidade angular do robô.
 
-O mapa do ambiente tanto para o planejamento de trajetórias quanto
-para a localização do robô. Como cada um destes sistemas tem
-requisitos diferentes, foram criados dois mapas independentes.
+Como o mapeamento está presente em dois sistemas, cada um com
+diferentes requisitos, serão criados dois mapas diferentes, um para o
+planejamento de trajetórias, em forma de mapa de custo, e outro para
+a localização do robô.
 
 \chapter{Revisão da Literatura}
 \label{revisao}
 
-Neste capítulo são apresentados os conceitos necessários para o
-desenvolvimento do trabalho, como o Robot Operating System~(ROS) 2,
-árvores de comportamento, mapeamento de ambientes e o
-\textit{Navigation 2}.
+Neste capítulo serão apresentadas as ferramentas e os conceitos
+empregados na navegação autônoma de um robô móvel, com foco nas
+técnicas presentes neste trabalho.
 
 \section{Robot Operating System 2 (ROS 2)}
 
 O ROS 2 é a segunda geração do Robot Operating System, um
 \textit{framework} para desenvolvimento de robôs. Ele foi
 desenvolvido a partir do zero para atender as necessidades de robôs
-modernos, com suporte para customização extensiva. O \textit{Data
-    Distribution Service}~(DDS) é utilizado como o \textit{middleware},
-que também é utilizado em sistemas de infraestrutura crítica, como
-aplicações militares, aeroespaciais e financeiras. Este padrão
-confere ao ROS ótima segurança e suporte para comunicação em tempo
+modernos, com suporte para customização extensiva. O seu
+\textit{middleware}, \textit{Data Distribution Service}~(DDS), também
+é usado em sistemas de infraestrutura crítica, como aplicações
+militares, aeroespaciais e financeiras. Este padrão confere ao ROS
+ótima segurança e suporte para comunicação em tempo
 real~\cite{ROS2Article}.
 
 Um assunto relevante a este trabalho são os padrões de comunicação do
@@ -172,13 +175,13 @@ comunicação unidirecionais, em que um nó, chamado de
 \textit{subscribers}, podem se inscrever no tópico publicado para
 receber essa mensagem. \textit{Services} são um mecanismo do tipo
 \textit{remote procedure call}~(RPC), em que um nó faz uma chamada a
-outro nó que executa uma computação e retorna um resultado,
+outro nó, que executa uma computação e retorna um resultado,
 funcionando como um cliente e um servidor.
 
 \textit{Actions}, são utilizados para tarefas de longa duração, com possibilidade de
 cancelamento prematuro.
 O cliente começa a execução enviando uma requisição para o servidor,
-que response periodicamente com o estado atual da tarefa.
+que retorna periodicamente o estado atual da tarefa.
 No término, é enviado o resultado, podendo ser sucesso ou falha.
 Um exemplo de uso é uma tarefa de navegação em que um \textit{action client}
 envia uma requisição com um ponto de destino para um \textit{action server}
@@ -196,16 +199,15 @@ coordenadas: \texttt{earth}, \texttt{map}, \texttt{odom} e
 \texttt{base\_link}, se da em relação a estes sistemas de
 coordenadas.
 
-O sistema de coordenadas chamado de \texttt{earth} é utilizado em
-casos onde são utilizados múltiplos mapas, permitindo a interação
-entre robôs de mapas diferentes. Neste trabalho, o foco é em um único
-robô em um único mapa, portanto, este sistema de coordenadas não é
-utilizado.
+O sistema de coordenadas chamado de \texttt{earth} serve como
+referência global em aplicações com diversos mapas com interação de
+robôs entre eles. Neste trabalho, o foco é em um único robô em um
+único mapa, portanto, este sistema de coordenadas não é utilizado.
 
 Assim, a posição do robô móvel será definida através das
 transformadas entre os sistemas de coordenadas \texttt{map},
 \texttt{odom} e \texttt{base\_link}. A transformada entre
-\texttt{map} e \texttt{odom} será dada pelo sistema de localização,
+\texttt{map} e \texttt{odom} é calculada pelo sistema de localização,
 enquanto que a transformada entre \texttt{odom} e \texttt{base\_link}
 pelo sistema de odometria.
 
@@ -218,19 +220,19 @@ pelo sistema de odometria.
 
 A odometria publica a pose do robô em relação ao sistema de
 coordenadas \texttt{odom}. Esta posição pode divergir ao longo do
-tempo, sem limites, porém sua posição deve ser contínua. Devido a
+tempo, sem limites, porém sua posição deve ser contínua. Devido à
 essas características, ela é útil para referência local, mas deve ser
 complementada com outros sistemas para referência global.
 
 Essa odometria é geralmente obtida através de sensores incrementais,
-como encoders nas rodas, que estimam a posição e orientação do robô
-através da integração da velocidade das rodas. Devido a integração, a
-estimativa de posição acumula erros ao longo do tempo.
+que estimam a posição e orientação do robô através da integração de
+dados de velocidade ou aceleração e, portanto, acumulam erros ao
+longo da distância percorrida, como é o caso de encoders das rodas.
 
 Outros exemplos de fontes de odometria são Unidades de Medição
 Inercial~(IMUs), que contém acelerômetros e giroscópios, e odometria
-visual, que utilizam sensores óticos para estimar o movimento do
-robô.
+visual, que utilizam sensores óticos para estimar a velocidade do
+robô através da diferença de dados sucessivos.
 
 \todo[inline]{
     explicaçao de odometria visual usando ransac(que o rtabmap odom usa)
@@ -241,57 +243,72 @@ robô.
 \subsection{Localização}
 
 O sistema de localização é responsável por publicar a transformada
-entre os sistemas de coordenadas \texttt{map} e \texttt{odom}. A
-posição do robô em relação ao \texttt{map} não deve divergir ao longo
-do tempo significativamente, porém, esta coordenada não é continua e
-a posição do robô pode mudar de forma abrupta em relação a ela. A
-localização tem como intuito, portanto, corrigir os erros de posição
-da odometria, publicando em uma frequência menor que a odometria um
-ajuste da posição do robô.
+entre os sistemas de coordenadas \texttt{map} e \texttt{odom}, que
+serve como um ajuste do erro da odometria. A estimativa de posição do
+robô em relação ao \texttt{map} não deve divergir ao longo do tempo
+significativamente, porém, esta coordenada não é continua e a posição
+do robô pode mudar de forma abrupta em relação a ela. Portanto, esta
+estimativa não precisa ser publicada a uma frequência tão alta quanto
+a odometria.
 
-Logo, devem ser utilizados sensores absolutos para localização, como
-sensores baseados em visão computacional. Estes sensores utilizam
-\textit{landmarks} obtidos através de um sensor ótico para estimar a
-posição do robô em relação a eles. Estes sistemas não sofrem com
-erros de acumulação, mas exigem processamento sofisticado,
-ocasionando um longo tempo entre estimativas. Percebe-se que estes
-sensores, portanto, são ideias para publicação da transformada entre
+Logo, sensores absolutos são ideais para estes sistemas, já que não
+sofrem com erros de acumulação. Porém, sensores deste tipo geralmente
+exigem processamento sofisticado, ocasionando um longo tempo entre
+estimativas. Percebe-se que estas duas características são
+semelhantes ao requisitos da publicação da transformada entre
 \texttt{map} e \texttt{odom}.
 
+\todo[inline]{amcl}
+
+Uma técnica comumente usada é a comparação de um mapa, obtido
+previamente, com dados de sensores óticos. A localização por Monte
+Carlo é uma das aplicações, mais comuns deste sistema. Nela, os
+estados possíveis do robô são representados por partículas, criando
+uma distribuição de probabilidade. Com os dados da odometria e do
+sensor ótico, o estado possível do robô é atualizado, sendo a
+partícula com maior probabilidade escolhida como a estimativa de
+posição do robô.
+
+Porém, em situações em que não há conhecimento prévio do ambiente,
+são necessários usar técnicas que realizam o mapeamento durante o
+deslocamento do robô.
+
 \section{Localização e Mapeamento Simultâneo (SLAM)}
-\todo{acho que seria bom explicar melhor como funciona o slam, mencionando
-    o loop closure}
 
-Um campo de pesquisa importante na robótica móvel é o de localização
-e mapeamento simultâneo~(SLAM). Introduzido em
-~\textcite{slam_intro}, onde foi apresentado um método a partir de um
-algoritmo baseado em um filtro de Kalman estendido, hoje aplicações
-modernas utilizam técnicas baseadas em grafos, como detalhado em
-\textcite{graph_slam}.
+\todo[inline]{refazendo...}
 
-Entre pacotes que implementam o algoritmo baseado em grafos se
-destacam o SLAM Toolbox e o Cartographer. Porém, o Cartographer foi
-abandonado pelo Google e não é mais atualizado. O SLAM Toolbox, por
-outro lado, foi escolhido como o pacote padrão de SLAM para o ROS 2,
-e oferece diversas melhoras em relação a sistemas de SLAM anteriores,
-como o GMapping, Karto, Hector e o próprio Cartographer. Estes
-pacotes utilizam sensores em duas dimensões, sendo sensores baseados
-em varrimento a laser os mais populares~\cite{SensorAndSLAM}.
+\subsection{Otimização de grafo de poses}
 
-Porém, com o avanço da tecnologia, sensores Red Green Blue -
-Depth~(RGB-D) e câmeras estéreo estão se tornando mais acessíveis,
-influenciando o desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
-Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e
-RTABMap, que possuem suporte a câmeras RGB-D e permitem localização
-pura.
+\subsection{Aplicações}
+% Um campo de pesquisa importante na robótica móvel é o de localização
+% e mapeamento simultâneo~(SLAM). Os primeiros algoritmos usavam
+% métodos baseados em filtros de Bayes\cite{probabilistic_robots},
+% porém aplicações modernas utilizam técnicas baseadas em grafos,
+%  como detalhado em \textcite{graph_slam}.
 
-Em \textcite{VSLAM}, é feita uma comparação entre estes sistemas,
-mostrando que o OpenVSLAM é a técnica mais adequada para maioria dos
-casos. Dos pacotes citados neste artigo, apenas o RTABMap continua
-sendo desenvolvido ativamente, com suporte as versões mais recentes
-do ROS 2. Porém, novos sistemas de VSLAM promissores estão sendo
-desenvolvidos, como o NVidia Isaac ROS VSLAM e o StellaROS, que é um
-sucessor do OpenVSLAM.
+% Entre pacotes que implementam o algoritmo baseado em grafos se
+% destacam o SLAM Toolbox e o Cartographer. Porém, o Cartographer foi
+% abandonado pelo Google e não é mais atualizado. O SLAM Toolbox, por
+% outro lado, foi escolhido como o pacote padrão de SLAM para o ROS 2,
+% e oferece diversas melhoras em relação a sistemas de SLAM anteriores,
+% como o GMapping, Karto, Hector e o próprio Cartographer. Estes
+% pacotes utilizam sensores em duas dimensões, sendo sensores baseados
+% em varrimento a laser os mais populares~\cite{SensorAndSLAM}.
+
+% Porém, com o avanço da tecnologia, sensores Red Green Blue -
+% Depth~(RGB-D) e câmeras estéreo estão se tornando mais acessíveis,
+% influenciando o desenvolvimento de sistemas de Visual~SLAM~(VSLAM).
+% Dentre sistemas de VSLAM, destacam-se o ORB-SLAM3, OpenVSLAM e
+% RTABMap, que possuem suporte a câmeras RGB-D e permitem localização
+% pura.
+
+% Em \textcite{VSLAM}, é feita uma comparação entre estes sistemas,
+% mostrando que o OpenVSLAM é a técnica mais adequada para maioria dos
+% casos. Dos pacotes citados neste artigo, apenas o RTABMap continua
+% sendo desenvolvido ativamente, com suporte as versões mais recentes
+% do ROS 2. Porém, novos sistemas de VSLAM promissores estão sendo
+% desenvolvidos, como o NVidia Isaac ROS VSLAM e o StellaROS, que é um
+% sucessor do OpenVSLAM.
 
 \section{Fusão de dados de sensores}
 
