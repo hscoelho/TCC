@@ -323,7 +323,7 @@ fechamento de laço; e otimização do grafo.
 A construção do grafo de poses é feita utilizando os dados extraídos
 dos sensores de odometria e percepção. Cada nó deste grafo consiste
 na posição estimada do robô, dada pela odometria, com as informações
-obtidas pelo sensor ótico, comumente em forma de \textit{features} da
+obtidas pelo sensor ótico, comumente em forma de características da
 imagem.
 
 Após a adição de um nó, é feita a procura de candidatos para o
@@ -384,12 +384,12 @@ deste tipo.
 
 Um exemplo de aplicação deste filtro para estimativa de posição no
 ROS 2 é o pacote
-\texttt{robot\_localization}~\cite{robot_localization_paper}. Este
-pacote permite um número ilimitado de entrada de dados de sensores, e
-tem suporte para diversos tipos de sensores, através da utilização de
-diversos tipos de mensagens do ROS. Além disso, é possível configurar
-os dados que serão utilizados de cada sensor, podendo ser excluídos
-dados que não são relevantes ou confiáveis do resultado final.
+\texttt{robot\_localization}~\cite{robot_localization_paper}. Ele
+permite um número ilimitado de entrada de dados de sensores, e tem
+suporte para diversos sensores, através da utilização de diferentes
+tipos de mensagens do ROS. Além disso, é possível configurar os dados
+que serão utilizados de cada sensor, podendo excluir os que não são
+relevantes ou confiáveis do resultado final.
 
 \section{Mapas de custo}
 
@@ -397,21 +397,22 @@ Um mapa de custo é uma representação de ambiente composta por uma
 grade de células que contém um valor, variando de desconhecido,
 livre, ocupado ou custo inflado.
 
-Em mapas de custo tradicionais, seus dados são armazenadas em mapas
-monolíticos, para utilização em planejamento de trajetórias. Esta
-implementação é utilizada com sucesso para caminhos curtos, mas pode
-apresentar dificuldade em lidar com ambientes dinâmicos maiores.
+Tradicionalmente, estes dados são armazenadas em mapas monolíticos,
+para utilização em planejamento de trajetórias. Esta implementação é
+aplicada com sucesso para caminhos curtos, mas pode apresentar
+dificuldade em lidar com ambientes dinâmicos
+maiores.\todo{referenciar}
 
 Uma solução para este problema são mapas de custo com camadas, que
-separam o processamento dos dados dos mapas de custos em camadas
-semanticamente distintas~\cite{layered_costmaps}. Esta separação
-permite a utilização de diferentes fontes de dados, permitindo, por
-exemplo, adicionar dados de sensores para atualizar o mapa, sem
-modificar o mapa original. Outras camadas podem ser configuradas para
-evitar certas áreas, manter uma distância segura de obstáculos ou
-seguir para seguir regras culturais, como manter a direita em
-corredores. A Figura \ref{fig:mapa_camadas} mostra uma configuração
-possível de camadas de mapas de custo.
+separam o processamento de dados em camadas semanticamente
+distintas~\cite{layered_costmaps}. Esta separação permite a
+utilização de diferentes fontes de dados, possibilitando, por
+exemplo, atualizar o mapa com dados de sensores, sem modificar o
+original. Outras camadas podem ser configuradas para evitar certas
+áreas, manter uma distância segura de obstáculos ou para respeitar
+regras culturais, como manter-se a direita em corredores. A Figura
+\ref{fig:mapa_camadas} mostra uma configuração possível de camadas de
+mapas de custo.
 
 \begin{figure}[h]
     {
@@ -424,14 +425,14 @@ possível de camadas de mapas de custo.
 \end{figure}
 
 Três destas camadas são essenciais para mapear ambientes dinâmicos: a
-camada estática, a camada de obstáculos e a camada de inflação. A
-camada estática tem o mapa base, que deve ter apenas obstáculos
-fixos, desta maneira, a trajetória planejada não será alterada em
-razão de objetos inexistentes.
+estática, a de obstáculos e a de inflação. A camada estática tem o
+mapa base, que deve ter apenas obstáculos fixos, desta maneira, a
+trajetória planejada não será alterada em razão de objetos
+inexistentes.
 
 A camada de obstáculos é responsável por atualizar o mapa de custo
 com obstáculos dinâmicos, através de dados de sensores óticos. Uma
-opção desta camada é a camada \textit{voxel}, que utiliza uma
+opção desta camada, é a camada \textit{voxel}, que utiliza uma
 representação em três dimensões dos dados dos sensores, introduzida
 em~\textcite{office_marathon}. Neste caso, é utilizado um espaço
 tridimensional, composto por blocos chamados de \textit{voxels}, que
@@ -444,7 +445,7 @@ para obstáculos que podem colidir com o robô.
 A camada de inflação utiliza os dados das camadas abaixo dela para
 criar uma zona de segurança entre os obstáculos. Esta zona tem
 valores intermediários entre os valores de obstáculo e livre, criando
-trajetórias seguras mas que permitem que o robô passe próximo a
+trajetórias seguras, mas que permitem que o robô passe próximo a
 obstáculos, caso necessário.
 
 \section{Navigation2}
@@ -456,7 +457,7 @@ O \textit{Navigation2}~(Nav2) é o sucessor do ROS \textit{navigation
 ambientes e classes de robôs cinemáticos. Baseando-se no legado do
 \textit{navigation stack} do ROS 1, o Nav2 foi construído em cima do
 ROS2, implementando técnicas mais modernas para ter um sistema
-modular propício para ambientes dinâmicos com suporte a uma maior
+modular propício para ambientes dinâmicos, e com suporte a uma maior
 variedade de sensores~\cite{Nav2}.
 
 Uma árvore de comportamento é utilizada para orquestrar as tarefas de
@@ -470,42 +471,43 @@ navegação únicos sem necessidade de programação.
 Além disso, todos estes servidores utilizam o conceito de
 \textit{Managed Nodes}, também conhecidos como \textit{Lifecycle
     Nodes}. Estes nós utilizam máquinas de estados para gerenciar seu
-ciclo de vida, utilizando transições de estado desde sua criação a
+ciclo de vida, usando transições de estado desde sua criação a
 destruição. No caso de falha ou desligamento, o nó vai do estado
 ativo ao estado finalizado, seguindo a máquina de estados, permitindo
 que o sistema seja interrompido de forma segura.
 
-\todo{não acho que esse paragrafo ta bom}
-Na arquitetura pode-se notar a utilização de dois mapas de custo, um
-local e outro global. O mapa local, utilizado no servidor do
+\todo{não acho que esse paragrafo ta bom(simplificacao ruim)}
+Na arquitetura, pode-se notar a utilização de dois mapas de custo, um
+local e outro global. O local, utilizado no servidor do
 controlador, realiza o planejamento a curto prazo e prevenção de
-colisão, enquanto o mapa global, aplicado no servidor de
+colisão, enquanto o global, aplicado no servidor de
 planejamento, é usado principalmente para planejamento a longo prazo.
 
 \chapter{Metodologia}
 \label{desenvolvimento}
 
+\todo{reescrever essa frase inicial se der tempo}
 O sistema de navegação do Twil foi desenvolvido utilizando a versão
-Humble do ROS 2, e com auxílio de ferramentas suportadas por esta
+Humble do ROS 2 e com auxílio de ferramentas suportadas por esta
 versão. Dentre as ferramentas utilizadas, destacam-se o Gazebo,
 utilizado para simulação do robô, e o \textit{Navigation2}, que
 fornece diversas ferramentas para implementar e orquestrar um sistema
 de navegação autônoma.
 
-Os variados componentes do robô, como os sensores utilizados neste
+Os variados componentes do robô, como os sensores empregados neste
 trabalho, foram implementados através de \textit{plugins} do Gazebo,
 que comunicam o estado do robô durante a simulação através de tópicos
 do ROS 2. A câmera RGB-D Intel RealSense D435, utilizada para o o
 mapeamento do ambiente, foco deste trabalho, foi implementada desta
 forma.
 
-O \textit{Navigation2}, que tem sua arquitetura mostrada na Figura
+O \textit{Navigation2}, que tem sua arquitetura apresentada na Figura
 \ref{fig:nav2_arc}, foi configurado para utilizar os componentes
 disponíveis do robô Twil. O \textit{Nav2} é responsável pelo envio
 comandos de velocidade para o robô, para que ele chegue ao destino
 desejado de modo seguro, evitando colisões. Como pré-requisito, devem
-ser fornecidos a este sistema a representação do ambiente, a posição
-do robô neste ambiente, e um controlador para transformar os comandos
+ser fornecidos a este sistema: a representação do ambiente; a posição
+do robô neste ambiente; e um controlador para transformar os comandos
 de velocidade em comandos para as rodas do robô.
 
 \begin{figure}[h]
@@ -522,30 +524,30 @@ A representação do ambiente é feita através de um mapa de custo, e é
 onde o servidor do planejador se baseia para construção de
 trajetórias seguras do robô. A posição do robô é obtida através de
 transformações entre os sistemas de coordenadas \texttt{map},
-\texttt{odom} e \texttt{base\_link} do robô, conforme a especificação
-REP 105~\cite{rep_105}. Esta posição é utilizada pelo servidor de
-controlador para gerar comandos de velocidade para seguir a
-trajetória planejada.
+\texttt{odom} e \texttt{base\_link} do mesmo, conforme a
+especificação REP 105~\cite{rep_105}. Esta posição é utilizada pelo
+servidor de controlador, que usa a rota planejada como referência
+para geração de comandos de velocidade.
 
 Antes do início deste trabalho, o Twil já estava configurada para
 utilizar o \textit{Nav2}, porém sem utilizar dados da câmera e IMU.
-Portanto, as trajetórias planejadas não eram atualizadas para evitar
-obstáculos e não havia sistema de localização, ou seja, a
-transformada entre \texttt{map} e \texttt{odom} era estática,
-portanto não havia ajuste da odometria implementada.
+Portanto, as trajetórias planejadas não eram atualizadas a fim de
+evitar obstáculos, além de não haver sistema de localização, ou seja,
+a transformada entre \texttt{map} e \texttt{odom} era estática, sem
+ajuste da odometria implementada.
 
 Em razão disso, foi adicionada a câmera RGB-D Intel RealSense D435 e
 um IMU ao robô, e o sistema de navegação foi aprimorado com a
-utilização destes sensores nos sistemas de odometria, localização e
-mapeamento.
+utilização destes sensores nos componentes de odometria, localização
+e mapeamento.
 
 Um diagrama simplificado da arquitetura do trabalho é mostrado na
-Figura \ref{fig:arq_trabalho}. O desenvolvimento deste trabalho foi
-focado nos componentes em vermelho, que realizam o mapeamento do
-ambiente, e componentes em verde, que estimam a posição do robô. O
-bloco em azul, que representa as outras ferramentas do \textit{Nav2},
-e o controlador em amarelo, que transforma os comandos de velocidade
-em comandos para as rodas do robô, já estavam configurados.
+Figura \ref{fig:arq_trabalho}. O desenvolvimento atual foi focado nos
+blocos em vermelho, que realizam o mapeamento do ambiente, e blocos
+em verde, que estimam a posição do robô. O bloco em azul, que
+representa as outras ferramentas do \textit{Nav2}, e o controlador em
+amarelo, que transforma os comandos de velocidade em comandos para as
+rodas do robô, já estavam configurados.
 
 \begin{figure}[h]
     {
@@ -558,26 +560,26 @@ em comandos para as rodas do robô, já estavam configurados.
 \end{figure}
 
 Os componentes de mapeamento criam duas representações do ambiente.
-Um mapa criado é o mapa de custo utilizado no planejamento de
-trajetórias, onde foi adicionada uma camada para percepção de
+Um mapa criado é o utilizado no planejamento de trajetórias, em forma
+de mapa de custo, onde foi adicionada uma camada para percepção de
 obstáculos utilizando a câmera RGB-D. Além disso, foi realizada a
 calibração da camada de inflação, para produzir caminhos mais
 seguros. O segundo mapa é criado e utilizado pelos sistemas de
 localização e mapeamento simultâneo~(SLAM), adicionados ao Twil.
 
-Em verde, estão os componentes referentes a estimativa de posição do
+Em verde, estão os componentes referentes à estimativa de posição do
 robô, onde foram adicionados pacotes que realizam a odometria visual
-e pacotes de SLAM. Também foi realizado ajustes na odometria das
-rodas, através da fusão de dados com o sensor IMU. Ademais, para
-realização de testes, foi mantida a opção de utilizar a transformada
-estática entre \texttt{map} e \texttt{odom}, e foi adicionado um
-sistema de odometria utilizando a posição exata do robô no Gazebo.
+e pacotes de SLAM. Também, aprimorou-se a odometria das rodas,
+através da fusão de dados com o sensor IMU. Ademais, para realização
+de testes, se manteve a opção de utilizar a transformada estática
+entre \texttt{map} e \texttt{odom}, e foi adicionado um sistema de
+odometria utilizando a posição exata do robô no Gazebo.
 
 Nas seções seguintes, será apresentado o robô e o ambiente de testes
 utilizado neste trabalho. Em seguida, será detalhado o
 desenvolvimento dos sistemas necessários para a navegação autônoma do
 robô neste ambiente. Finalmente, será descrita a coleta de dados para
-a análise dos resultados, que é apresentada no próximo capítulo.
+a análise dos resultados, que será apresentada no próximo capítulo.
 
 \section{Configuração do robô}
 
@@ -587,57 +589,56 @@ compilado para o formato URDF, utilizado pelo nodo
 \texttt{robot\_state\_publisher}, que publica esta descrição em um
 tópico. Este modelo é utilizado no rviz para visualização do robô,
 como representado na Figura \ref{fig:robo_rviz}, e no Gazebo para
-simulação. Para a simulação dos componentes físicos do robô, como
-sensores e atuadores, são utilizados \textit{plugins} do Gazebo,
-também presentes no arquivo de descrição.
+simulação. Os componentes físicos do robô, como sensores e atuadores,
+são criados a partir de \textit{plugins} do Gazebo, também presentes
+no arquivo de descrição.
 
 Durante este trabalho, foram configurados dois novos componentes ao
-robô, a câmera RGB-D Intel RealSense D435 e um IMU. A câmera foi
-utilizada nos sistemas de odometria, localização e mapeamento,
+robô, a câmera RGB-D Intel RealSense D435 e um IMU. A câmera está
+presente nos sistemas de odometria, localização e mapeamento,
 enquanto o IMU foi usado como suplemento ao sistemas de odometria,
 fornecendo dados de orientação do robô para fusão de dados.
 
 Para utilização da câmera, é necessário o pacote
 \texttt{realsense-ros}~\cite{realsense_ros}, que contém o modelo da
 câmera. O \textit{plugin} do Gazebo \texttt{camera\_plugin}, é
-responsável pela publicação dos dados da câmera simulada. São
-utilizados cinco tópicos para publicar estes dados: dois tópicos são
-utilizados para publicar as imagens não comprimidas, uma RGB e outra
-de profundidade; dois tópicos com informações destas imagens; e um
-tópico com a nuvem de pontos produzida pela câmera.
+responsável pela publicação dos dados da câmera simulada. Cinco
+tópicos são responsáveis por estes dados: dois tópicos publicam as
+imagens não comprimidas, uma RGB e outra de profundidade; dois
+tópicos com informações suplementares destas imagens; e um tópico com
+a nuvem de pontos produzida pela câmera.
 
 A adição do IMU foi feita utilizando o \textit{plugin}
 \texttt{GazeboRosImuSensor}, que publica mensagens do tipo
 \texttt{sensor\_msgs/Imu}. Estas mensagens contêm a orientação,
 velocidade angular e aceleração linear do robô. Por si só, o IMU não
-é confiável para estimar a posição do robô porque porque necessita
-integrar a aceleração linear duas vezes para estimar a posição, que
-pode introduzir erros significativos. Porém, os dados referentes a
-orientação e velocidade angular podem ser fundidos com outras fontes
-de odometria para complementar outras fontes de odometria. Para
-representar fisicamente o IMU no robô, foi reutilizada a descrição de
-uma placa de circuito impresso \textit{Eurocard}, já utilizada em
-outros componentes do robô.
+é confiável para estimar a posição do robô porque necessita integrar
+a aceleração linear duas vezes para calcular a posição e, portanto, é
+muito suscetível a ruídos. Porém, os dados referentes a orientação e
+velocidade angular, podem complementar as outras fontes de odometria,
+através da fusão de dados. Para representar fisicamente o IMU no
+robô, foi reutilizada a descrição de uma placa de circuito impresso
+\textit{Eurocard}, que também representa outros componentes do robô.
 
-A conversão dos comandos de velocidade em movimento de rodas do robô
-é feita pelo controlador, configurado no pacote
-\texttt{twil\_bringup}. Diversos controladores estão configurados e
-disponível para uso com o Twil, porém o controlador
+A atuação das rodas do robô, a partir dos comandos de velocidade
+produzidos pelo \textit{Nav2}, é feita por controladores configurados
+no pacote \texttt{twil\_bringup}. Diversos deles estão disponíveis
+para uso com o Twil, porém o controlador
 \textit{twist\_mrac\_controller}, do pacote
-\texttt{linearizing\_controllers} foi o escolhido e configurado para
-ser usado com o \textit{Nav2} em trabalhos anteriores.
+\texttt{linearizing\_controllers} foi o escolhido e conectado ao
+\textit{Nav2} em trabalhos anteriores.
 
 \section{Ambiente de simulação}
 
-O sistema será simulado em uma simulação do prédio Centenário da
+O sistema será testado em uma simulação do prédio Centenário da
 Escola de Engenharia da UFRGS, utilizando o Gazebo. No pacote
 \texttt{ufrgs\_map} está incluído uma representação em formato PGM da
 planta do prédio, mostrada na Figura \ref{fig:planta_centenario},
-desenvolvida em \textcite{petry_tcc} Além da imagem da planta, também
-está presente um arquivo de configuração em formato YAML, que contém
-a resolução, origem do mapa. Este arquivo de também contém parâmetros
-para utilização como mapa de custo, indicando a faixa de valores para
-considerar uma célula como livre ou ocupada.
+desenvolvida em~\textcite{petry_tcc}. Além da imagem da planta,
+também está presente um arquivo de configuração em formato YAML, que
+contém a resolução, origem do mapa. Este arquivo ainda contém
+parâmetros para utilização como mapa de custo, indicando a faixa de
+valores para considerar uma célula como livre ou ocupada.
 
 \begin{figure}[h]
     {
@@ -650,11 +651,11 @@ considerar uma célula como livre ou ocupada.
 \end{figure}
 
 O pacote \texttt{ufrgs\_gazebo} contém arquivos de mundos do Gazebo
-para simulação. Este pacote, porém, estava desatualizado e não
-continha uma representação completa do prédio Centenário. Utilizando
-o \textit{Building Editor} do Gazebo, foi criado um modelo
-simplificado do prédio em 3D, com base na sua planta, mostrado na
-Figura \ref{fig:gazebo_centenario}.
+para simulação. Ele, porém, estava desatualizado e não continha uma
+representação completa do prédio Centenário. Utilizando o
+\textit{Building Editor} do Gazebo, foi criado um modelo simplificado
+do prédio em 3D, com base na sua planta, mostrado na Figura
+\ref{fig:gazebo_centenario}.
 
 \begin{figure}[h]
     {
@@ -666,20 +667,21 @@ Figura \ref{fig:gazebo_centenario}.
     % {\sourcecitation{Autor.}}
 \end{figure}
 
-Não foram adicionados os obstáculos em cinza claro da planta da
-Figura \ref{fig:planta_centenario}, que não são obstáculos fixos.
-Para teste com obstáculos dinâmicos ou temporário são adicionados
-novos objetos a este mundo durante a execução da simulação no Gazebo.
+Não foram adicionados os obstáculos representados em cinza claro da
+planta da Figura \ref{fig:planta_centenario}, que não são obstáculos
+fixos. Para teste com obstáculos dinâmicos ou temporários são
+adicionados novos objetos a este mundo durante a execução da
+simulação no Gazebo.
 
 \section{Estimativa de posição do robô}
 
 A estimativa de posição é feita utilizando o sistemas de coordenadas
-definido pela norma REP 105~\cite{rep_105}, que define quatro
+definido pela norma REP 105~\cite{rep_105}, que estabelece quatro
 sistemas de coordenadas: \texttt{earth}, \texttt{map}, \texttt{odom}
 e \texttt{base\_link}. Como só é utilizado um mapa, o sistema de
 coordenadas \texttt{earth} não é utilizado. Todas transformadas entre
 estes sistemas de coordenadas são publicadas no tópico \texttt{tf},
-por padrão do ROS 2. Estas transformadas são publicados por dois
+por padrão do ROS 2. Estas transformadas são calculadas por dois
 sistemas, o de odometria e de localização.
 
 \subsection{Odometria}
@@ -702,31 +704,31 @@ através do pacote \texttt{twist\_mrac\_controller}, utilizando dados
 do encoder nas rodas para estimar a posição do robô. O cálculo da
 posição é feito pelo pacote \texttt{arc\_odometry}, que utiliza o
 modelo cinemático de um robô móvel de acionamento diferencial para
-estimar a posição e orientação do robô a partir das posições de junta
-das rodas. Para aprimorar a qualidade desta odometria, foi adicionado
-o pacote \texttt{robot\_localization}, que realiza a fusão de de
-dados da odometria das rodas com os dados do IMU.
+estimar a posição e orientação do robô a partir das rotação das
+rodas. Para aprimorar a qualidade desta odometria, foi adicionado o
+pacote \texttt{robot\_localization}, que realiza a fusão de dados da
+odometria das rodas com os dados do IMU.
 
 \todo[inline]{
     reescrever e explicar melhor a parte da utilizacao da velocidade
 }
 A fusão é realizada através de um filtro de Kalman estendido, onde
 devem ser escolhidos quais dados dos sensores devem ser considerados.
-Apesar da recomendação de configuração dos criadores do pacote, onde
-é sugerido utilizar apenas dados de velocidade e não de posição
-\cite{robot_localization_guide}, para os dados calculados pelo
+Apesar da recomendação de configuração dos criadores do pacote, em que
+é sugerido considerar apenas dados de velocidade e não de posição
+\cite{robot_localization_guide}, para os cálculos realizados pelo
 \texttt{arc\_odometry}, decidiu-se utilizar tanto a posição quanto a
 velocidade na fusão de dados. Isso foi feito porque a velocidade
-calculada pelo \texttt{arc\_odometry} é calculada em referência ao
+obtida pelo \texttt{arc\_odometry} é calculada em referência ao
 sistema de coordenadas global, neste caso, o \texttt{odom}, enquanto
 que o \texttt{robot\_localization} espera que a velocidade seja em
-referência a base do robô. Portanto, a posição calculada pelo
-\texttt{robot\_localization} com a velocidade publicado pelo
-\texttt{arc\_odometry} não é correta.
+referência a base do robô. Portanto, o \texttt{robot\_localization}
+não é capaz de estimar a posição do robô com base na velocidade
+publicada pelo \texttt{arc\_odometry}.
 
 Porém, utilizando os dados de posição da odometria de rodas, não é
-usado a velocidade para calcular a posição. Desta forma, a posição
-publicada pelo \texttt{robot\_localization} é a mesma que a publicada
+usado a velocidade para calcular a posição. Desta forma, a pose
+publicada pelo \texttt{robot\_localization} é a mesma que a estimada
 pelo \texttt{arc\_odometry}, já que esta é a única fonte de dados de
 posição. Porém, a orientação e velocidade angular da odometria das
 rodas são fundidas com os dados do IMU, melhorando a precisão destes
@@ -739,28 +741,27 @@ campos na mensagem publicada.
 Como alternativa a este sistema, foi implementado um sistema de
 odometria visual, publicado pelo executável \texttt{rgbd\_odometry}
 do pacote \texttt{rtabmap\_odom}, que utiliza imagens da câmera RGB-D
-com auxílio do sensor IMU para estimava da posição. Utilizando
-características das imagens RGB, com a informação de profundidade da
-imagem de profundidade, é utilizado um método \textit{Random Sample
-    Consensus} (RANSAC), para comparar imagens consecutivas e estimar a
-velocidade do robô\cite{rtabmap_odom}.
+com auxílio do sensor IMU para estimava da posição. Com a informação
+de profundidade, são comparadas características visuais entre imagens
+consecutivas, a velocidade do robô é estimada com um algoritmo
+baseado em \textit{Random Sample
+    Consensus}~(RANSAC)~\cite{rtabmap_odom}.
 
-É possível, fundir os dados destes dois sistemas de odometria,
+É possível fundir os dados destes dois sistemas de odometria,
 porém, optou-se por mantê-los separados para facilitar a comparação
 do desempenho entre eles.
 
+\todo{reescrever este paragrafo}
 Finalmente, para realização de testes, foi implementado um sistema de
-odometria com a posição real do robô no Gazebo. Utilizando o
-\textit{plugin} P3D, é publicada uma mensagem do tipo
-\texttt{nav\_msgs/Odometry} com a posição do robô em relação ao
-sistema de coordenadas \texttt{odom} a um tópico auxiliar. Quando
-está sendo utilizado este sistema de odometria, o que é publicado
-neste tópico é retransmitido para o tópico \texttt{/odom} e o pacote
+odometria com a posição real do robô no Gazebo. O \textit{plugin}
+P3D, publica uma mensagem do tipo \texttt{nav\_msgs/Odometry} com a
+posição do robô em relação ao sistema de coordenadas \texttt{odom}.
+Quando este sistema de odometria é selecionado, as informações do P3D
+são retransmitidas no tópico \texttt{/odom} e o pacote
 \texttt{odom\_to\_tf\_ros2} publica a transformada entre
-\texttt{odom} e \texttt{base\_link} com base no dado de posição da
-mensagem publicada.
+\texttt{odom} e \texttt{base\_link} a partir destes dados.
 
-Os sistemas de odometria utilizados, estão resumidos na Tabela
+Os sistemas de odometria utilizados estão resumidos na Tabela
 \ref{tab:odometria}, onde é indicado o pacote, a fonte de dados e o
 tipo de mensagem recebido por cada um.
 
@@ -807,19 +808,19 @@ robô, e a transformada entre \texttt{map} e \texttt{odom} era
 estática, causando divergência na estimativa de posição durante a
 navegação. Este sistema foi mantido para testes, porém foram
 implementados dois sistemas de localização baseados em localização e
-mapeamento simultâneos(SLAM), utilizando a câmera RGB-D Intel
+mapeamento simultâneos~(SLAM), utilizando a câmera RGB-D Intel
 RealSense D435, para melhorar a estimativa de posição do robô
 publicada pela odometria.
 
 Uma alternativa à sistemas SLAM é o \texttt{nav2\_amcl}, que utiliza
 localização por Monte Carlo com um mapa construída previamente, que
 poderia ser a planta do prédio, para estimar a posição do robô.
-Porém, opção foi descartada, pois o objetivo é a utilização do robô
+Porém, opção foi descartada, pois o robô deve ser capaz de navegar em
 em ambiente dinâmicos ou pouco conhecidos, onde um mapa estático não
 seria adequado. Além disso, este pacote só é compatível com
 representações bidimensionais do ambiente, que causaria problemas na
-detecção de objetos tridimensionais como as escadas, agravando as
-diferenças já existem entre o ambiente do Gazebo e a planta.
+detecção de objetos tridimensionais, como as escadas, agravando as
+divergências que já existem entre o ambiente do Gazebo e a planta.
 
 Os dois sistemas de SLAM utilizados foram o \texttt{slam\_toolbox} e
 o \texttt{rtabmap\_slam}, resumidos na Tabela \ref{tab:localizacao}.
@@ -839,15 +840,15 @@ o \texttt{rtabmap\_slam}, resumidos na Tabela \ref{tab:localizacao}.
     \end{center}
 \end{table}
 
-O \textit{slam\_toolbox}, realiza o SLAM em 2D, e foi criado para
+O \textit{slam\_toolbox}, realiza o SLAM em 2D e foi criado para
 utilizar sensores a laser. Portanto, são esperadas mensagens do tipo
 \texttt{sensor\_msgs/LaserScan} para percepção do ambiente neste
 sistema. Como a câmera RGB-D não publica mensagens desse tipo, o
 pacote \texttt{depthimage\_to\_laserscan} foi usado para converter a
 imagem de profundidade da câmera na mensagem esperada, em forma de um
 feixe de luz em duas dimensões localizado na altura da câmera. O
-\textit{rtabmap}, por outro lado, realiza o SLAM em 3D, e utiliza
-todos os tópicos publicados pela câmera RGB-D, e não necessita de
+\textit{rtabmap}, por outro lado, realiza o SLAM em 3D e aproveita
+todos os tópicos publicados pela câmera RGB-D, não necessitando de
 conversão de mensagens.
 
 Ambos sistemas publicam a transformada entre \texttt{map} e
@@ -881,9 +882,9 @@ desde o início, não é possível planejar trajetórias para ambientes
 não visitados previamente. Além disso, é preferível que o mapa da
 camada estática tenha apenas obstáculos fixos, como paredes e
 escadas, e utilizar a camada de obstáculos para obstáculos dinâmicos.
-Esta separação permite que o mapa estática seja utilizado em diversas
-sessões, porém com uma camada de obstáculos nova a cada sessão. Além
-disso, a camada de obstáculos pode ser configurada de forma
+Esta separação permite que o mapa estático seja utilizado em diversas
+sessões, porém com uma camada de obstáculos nova a cada sessão.
+Ademais a camada de obstáculos pode ser configurada de forma
 independente que o SLAM, podendo utilizar outros sensores ou
 considerar uma altura de obstáculos diferente.
 
@@ -894,15 +895,16 @@ utilizada para planejamento de trajetória.
 
 \subsection{Mapeamento de custo}
 
-O mapa de custo utilizado é composto por três camadas: a camada
-estática, que possui uma representação simples do ambiente,
-preferencialmente sem obstáculos temporários; a camada de obstáculos
-ou \textit{voxel}, onde são utilizados dados dos sensores óticos para
-atualizar o mapa com obstáculos percebidos; e a camada de inflação,
-que cria um campo de custo ao redor dos obstáculos.
+O mapa de custo usado no planejamento de trajetórias é composto por
+três camadas: a camada estática, que possui uma representação simples
+do ambiente, preferencialmente sem obstáculos temporários; a camada
+de obstáculos ou \textit{voxel}, onde são utilizados dados dos
+sensores óticos para atualizar o mapa com obstáculos percebidos; e a
+camada de inflação, que cria um campo de custo ao redor dos
+obstáculos.
 
 A planta do prédio Centenário, representada na Figura
-\ref{fig:planta_centenario}, foi utilizada como mapa estático. O mapa
+\ref{fig:planta_centenario}, foi utilizada como mapa estático. Ele
 foi configurado para considerar apenas as cédulas em preto escuro
 como ocupados, que equivalem a obstáculos fixos, como paredes e a
 escada. As cédulas em cinza claro são consideradas livres, que
@@ -911,10 +913,10 @@ mesas.
 
 A camada de obstáculos utiliza os dados da camera RGB-D para
 atualizar o mapa. Existem dois \textit{plugins} que podem ser
-utilizados para este fim, o \texttt{obstacle\_layer} e o
-\texttt{voxel\_layer}. Ambos podem utilizar mensagens do tipo
+aplicados para este fim, o \texttt{obstacle\_layer} e o
+\texttt{voxel\_layer}. Ambos suportam mensagens do tipo
 \texttt{PointCloud2}, que são publicadas pela câmera RGB-D, porém
-utilizam técnicas diferentes para atualizar o mapa. \todo{nao achei
+empregam técnicas diferentes para atualizar o mapa. \todo{nao achei
     traducao para ray casting} O \texttt{obstacle\_layer} utiliza
 \textit{ray casting} em 2D para determinar a posição dos obstáculos.
 O \texttt{voxel\_layer}, por outro lado, cria um gride
@@ -927,7 +929,7 @@ Portanto, é necessária a percepção em 3D do ambiente para evitar
 colisões com estes obstáculos. Logo, foi utilizado o
 \texttt{voxel\_layer} para atualizar o mapa de custo.
 
-Para a configuração do \texttt{voxel\_layer}, é necessário definir a
+Para a configuração do \texttt{voxel\_layer}, é preciso definir a
 resolução e o número de \textit{voxels} no eixo Z utilizados. A
 câmera RGB-D Intel RealSense D435 do Twil está localizada a uma
 altura de aproximadamente 1,37 metros do chão, que é a altura mínima
@@ -935,9 +937,9 @@ do gride de \textit{voxels}. O número máximo de \textit{voxels}
 permitido pelo \textit{plugin} é 16. Tendo em vista estes dados, foi
 definido um gride de \textit{voxels} com 15 \textit{voxels} de
 resolução 0,1 metro, criando um gride de 1,5 metro de altura.
-Portanto, serão captados obstáculos dentro deste campo, porém
-obstáculos com altura superior a 1,5 metro não serão detectados. Isso
-é importante para evitar a detecção de obstáculos que não são
+Portanto, serão captados obstáculos dentro deste campo, porém objetos
+com altura superior a 1,5 metro não serão detectados. Isso é
+importante para evitar a detecção de obstáculos que não são
 relevantes para a navegação como, no caso do ambiente de simulação
 utilizado, a moldura das portas.
 
@@ -946,10 +948,11 @@ segurança ao redor dos objetos captados nas outras camadas, para
 garantir uma distância segura ao planejar a trajetória. Em
 \textcite{ros_tuning_guide}, recomenda-se que a camada de inflação
 cubra um raio grande em volta de obstáculos com uma curva de
-decaimento de inclinação baixa, criando um campo em grande parte do
-mapa de custo. Desta forma, são criadas trajetórias que passam no
-meio de obstáculos, mantendo a maior distância possível entre o robô
-e possíveis colisões.
+decaimento de inclinação baixa, para criar um campo que cobre a maior
+parte do mapa de custo. Desta forma, são criadas trajetórias que
+passam no meio de obstáculos, mantendo uma distância segura,
+diminuindo o risco de possíveis colisões e realizando movimentos
+suaves.
 
 \todo[inline]{
     daria pra fazer uma tabela igual ao dos sistemas de odometria
@@ -964,12 +967,12 @@ mapas, um por cada pacote de localização implementado,
 \texttt{slam\_toolbox} e \texttt{rtabmap\_slam}, descritos na Seção
 \ref{met:localizacao}.
 
-Devido aos dados dos sensores utilizados o \texttt{slam\_toolbox} é
-capaz de criar mapas apenas em duas dimensões. Porém, o
-\texttt{rtabmap\_slam} pode criar mapas em duas ou três dimensões.
-Como o robô Twil não é capaz de se movimentar em três dimensões,
-neste trabalho só serão comparados os mapas em 2D criados por ambos
-pacotes.
+Devido aos dados dos sensores à sua disposição, o
+\texttt{slam\_toolbox} só é capaz de criar mapas em duas dimensões.
+Porém, o \texttt{rtabmap\_slam} pode criar mapas em duas ou três
+dimensões. Como o robô Twil não é capaz de se movimentar no eixo Z,
+neste trabalho só serão comparados os mapas bidimensionais criados
+por ambos pacotes.
 
 \todo[inline]{
     poderia escrever mais nessa seção talvez
@@ -981,48 +984,48 @@ pacotes.
 \section{Testes e coleta de dados}
 \label{met:testes}
 
-Devido a independência entre o mapeamento de custos e os demais
+Devido à independência entre o mapeamento de custos e os demais
 sistemas desenvolvidos neste trabalho, foram realizados dois tipos de
 de testes diferentes. Para testar o mapeamento de custo, foram
-executadas criadas trajetórias com e sem obstáculos para testar a
-performance das camadas de obstáculos e inflação. Para testar os
-sistemas de odometria, localização e mapeamento SLAM, foram
-utilizados arquivos de gravação de tópicos do ROS 2, chamados de
-sacolas, ou em inglês, \textit{bags}.
+criadas trajetórias com e sem obstáculos para testar a performance
+das camadas de obstáculos e inflação. Já para conferir o
+funcionamento dos sistemas de odometria, localização e mapeamento
+SLAM, utilizaram-se arquivos de gravação de tópicos do ROS 2,
+chamados de sacolas, ou em inglês, \textit{bags}.
 
-Estas sacolas permite a execução de diversas simulações usando os
-mesmos dados de entrada. Outro benefício foi o alivio na exigência de
-processamento do computador utilizado, já que foi realizar a
-simulação no Gazebo e executar os nodos de localização separadamente.
+Estas sacolas permitem a execução de diversas simulações usando os
+mesmos dados de entrada. Outro benefício foi o alívio na exigência de
+processamento do computador utilizado, já que não foi necessário
+realizar a simulação no Gazebo e a execução dos nodos de localização
+simultaneamente.
 
 Para a gravação das sacolas, foi criado um programa em \textit{bash}
-que contêm todos os tópicos necessários para a execução dos sistemas
+que contém todos os tópicos necessários para a execução dos sistemas
 de odometria e localização, além de tópicos auxiliares para
 comparação com a posição real do robô e visualização no rviz, como o
-tópico \texttt{/ground\_truth}, que contém a posição real do robô,
-publicado pelo \textit{plugin} P3D do Gazebo. Este tópico difere do
-tópico criado por este \textit{plugin} utilizado no sistema odometria
-porque a posição deste é publicada em relação ao sistema de
-coordenadas \texttt{map} e não \texttt{odom}.
+\texttt{/ground\_truth}, que informa a posição real do robô,
+publicado pelo \textit{plugin} P3D do Gazebo. Este difere do tópico
+utilizado no sistema de odometria perfeita criado por este mesmo
+\textit{plugin} porque a posição deste é publicada em relação ao
+sistema de coordenadas \texttt{map} e não \texttt{odom}.
 
 Os tópicos necessários para a execução dos sistemas de odometria
 estão nas Tabelas \ref{tab:odometria} e \ref{tab:localizacao},
 descritos anteriormente. Porém, além destes que são inscritos
 explicitamente na configuração do pacote, os sistemas de odometria e
-localização que utilizam a câmera RGB-D também utilizam o tópico
-\texttt{/tf}, que contém a árvore de transformadas da base do robô
-até a câmera. Esta transformação é necessária para a utilização dos
-dados da câmera. Portanto, esta informação deve estar presente
-durante a execução dos testes.
+localização que incorporam a câmera RGB-D, também necessitam da
+árvore de transformações da base do robô à câmera, contida no tópico
+\texttt{/tf}. Portanto, esta informação deve estar presente durante a
+execução dos testes.
 
 Uma solução para disponibilizar esta transformada seria gravar o
 tópico \texttt{/tf} durante a execução da simulação. Porém, isto não
 é possível, porque este tópico já possui as transformadas entre
 \texttt{map}, \texttt{odom} e \texttt{base\_link}, o que causaria
 conflitos com as transformadas publicadas pelos sistemas de odometria
-e localização sendo testados. Logo, durante a execução dos testes,
-devem ser publicadas as mesmas transformadas que foram publicadas
-durante a gravação da sacola.
+e localização sendo testados. Logo, deverão ser executados os mesmos
+nodos que disponibilizam as informações de transformação da base do
+robô à câmera durante o teste.
 
 A transformação das juntas do robô são publicadas pelo
 \texttt{robot\_state\_publisher}. Existem dois tipos de juntas entre
@@ -1052,7 +1055,7 @@ forma, os dados dos testes ficam gravados e podem ser analisados
 posteriormente.
 
 Os gráficos foram construídos utilizando os dados de posição x e y
-das mensagens do tipo \texttt{nav\_msgs/Odometry} publicadas pelos
+das mensagens do tipo \texttt{nav\_msgs/Odometry}, publicadas pelos
 sistemas de odometria e pelo Gazebo com a posição real do robô. Para
 o sistemas de localização, foram utilizados os dados de posição x, y
 das mensagens do tipo
@@ -1133,7 +1136,7 @@ realizar este teste, foi adicionada uma caixa ao mundo do Gazebo,
 durante a simulação. Então, foi criada uma rota que passe por este
 obstáculo, como na Figura \ref{fig:voxel_before}. Ao se aproximar
 desta caixa, ela é detectada pela nuvem de pontos da câmera,
-representada como pontos brancos, e é adicionada ao mapa de custom,
+representada como pontos brancos, e é adicionada ao mapa de custo,
 como é visto na Figura \ref{fig:voxel_after}.
 
 \begin{figure}[h]
@@ -1163,7 +1166,7 @@ Percebe-se nestas duas imagens, que caso fosse utilizada uma
 representação plana do ambiente, na altura da câmera, que pode ser
 visto em amarelo nas
 Figuras~\ref{fig:voxel_before}~e~\ref{fig:voxel_after}, o obstáculo
-não seria detectado, e o robô colidiria com a caixa.
+não seria percebido, e o robô colidiria com a caixa.
 
 \section{Testes de odometria, localização e mapeamento SLAM}
 
@@ -1173,13 +1176,13 @@ permitindo dessa forma, a mesma entrada em cada sistema.
 
 Na Figura \ref{fig:base_bag}, é mostrado o robô realizando a
 trajetória de testes. As setas em vermelho representam a mensagem de
-odometria do robô, onde é indicado a posição e orientação do robô. A
-linha verde indica a trajetória planejada do robô. O caminho
-realizado neste teste começa na origem, segue em direção a porta no
-canto superior direto da sala, percorre o corredor e entra na
-primeira sala. É possível comparar a percepção de diferentes
-ambientes neste teste, como em corredores estreitos e salas abertas.
-A distância total percorrida pelo robô foi de $13,08~\si{\meter}$.
+odometria do mesmo, onde é indicado a pose atual dele. A linha verde
+indica a trajetória planejada do robô. O caminho realizado neste
+teste começa na origem, segue em direção à porta no canto superior
+direto da sala, percorre o corredor e entra na primeira sala. É
+possível comparar a percepção de diferentes ambientes neste teste,
+como em corredores estreitos e salas abertas. A distância total
+percorrida foi de $13,08~\si{\meter}$.
 
 Devido ao tamanho da sacola de dados em razão da captura das imagens
 da câmera, não foi possível realizar uma simulação longa, que
@@ -1199,18 +1202,19 @@ mapeamento de sistemas SLAM.
 
 \subsection{Odometria}
 
-Após o fim da simulação e captura de dados, foram executados os
+Após o fim da simulação e da captura de dados, foram executados os
 sistemas de odometria na sacola gerada. Neste teste, utilizou-se a
 transformada estática entre os sistemas de coordenadas \texttt{map} e
-\texttt{odom}, para comparar a odometria das rodas e visual. A partir
-dos dados obtidos, foram criados gráficos com as estimativas da
-posição do robô nos eixos X e Y em relação a origem do sistema de
+\texttt{odom}, para comparar a odometria das rodas e visual.
+
+A partir dos dados obtidos, foram criados gráficos com as estimativas
+da posição do robô nos eixos X e Y em relação a origem do sistema de
 coordenadas \texttt{map} dos sistemas de odometria em verde,
 comparados com a posição real do robô em vermelho, e gráficos com o
 erro de estimativa de posição ao longo da distância percorrida.
 
 Importante notar que os gráficos de erro de distância apresentam um
-ruído aparente, devido a diferença de frequência de publicação das
+ruído aparente, devido à diferença de frequência de publicação das
 mensagens de posição real e estimativa de posição. Entre a geração de
 uma estimativa e outra, o erro de distância aumenta, já que a posição
 real é atualizada e a estimativa não.
@@ -1224,7 +1228,7 @@ estimativa da orientação do robô.
 
 O erro de orientação é especialmente indesejado porque, quando é
 causado, se transforma em erro de posição lateral e aumenta sem
-limite\cite{borenstein}. Na primeira parte do trajeto, da origem até
+limite~\cite{borenstein}. Na primeira parte do trajeto, da origem até
 a primeira porta, a orientação estimada divergiu constantemente,
 causando uma curva exponencial do erro, como é visto na Figura
 \ref{fig:odom_controller_error}. Este erro continuou crescendo até o
@@ -1260,13 +1264,15 @@ Por outro lado, a odometria visual, mostrada na Figura
 No gráfico da posição estimada, da Figura \ref{fig:odom_visual},
 mostra que ocorreu a mesma inclinação para a direita que a odometria
 das rodas, porém menos acentuada. Como este gráfico não tem
-informação sobre o tempo, em certos da trajetória no corredor, a
-posição estimada parece estar igual a posição real, porém, na Figura
-\ref{fig:odom_visual_error}, é possível perceber que o erro de
-estimativa cresceu ao longo deste trajeto, atingindo um erro de
-$0,5~\si{\meter}$ no pico. Este erro diminuiu enquanto o robô
-percorria a curva final, porém logo aumento novamente atingindo um
-erro de $0,66~\si{\meter}$ no final do trajeto.
+informação sobre o tempo, em alguns pontos da trajetória no corredor,
+a posição estimada parece estar igual a posição real. Isto não
+aconteceu, já que a estimativa ocorreu em um momento diferente ao da
+posição real. Isto é possível perceber a partir da análise do erro da
+Figura \ref{fig:odom_visual_error}, onde é indicado um aumento do
+erro de estimativa ao longo deste trajeto, atingindo um máximo de
+$0,8~\si{\meter}$. Este erro diminuiu enquanto o robô percorria a
+curva final, porém logo aumentou novamente atingindo um erro de
+$0,66~\si{\meter}$ no final do trajeto.
 
 \begin{figure}[h]
     \caption{Resultado da odometria visual.}
@@ -1303,12 +1309,12 @@ obtida através da transformada entre \texttt{map}, \texttt{odom} e
 
 A Figura \ref{fig:rtabmap_slam_result} mostra o resultado do sistema
 de localização do pacote \texttt{rtabmap\_slam}. A localização neste
-caso teve um ajuste bem pequeno, diminuindo o erro para
-$0,63~\si{\meter}$ no pico na posição final. É possível perceber pelo
+caso aprimorou levemente a estimativa de posição, diminuindo o erro
+para $0,63~\si{\meter}$ na final do trajeto. É possível perceber pelo
 gráfico da Figura \ref{fig:localization_rtabmap_error} que a curva do
-erro manteve uma forma semelhante a curva do erro da odometria
-visual. Porém, houve menos ruído na estimativa de posição, como
-mostra a Figura \ref{fig:localization_rtabmap}.
+erro manteve a mesma forma da curva do erro da odometria visual.
+Porém, houve menos ruído na estimativa de posição, como mostra a
+Figura \ref{fig:localization_rtabmap}.
 
 \begin{figure}[h]
     \caption{Resultado do pacote \texttt{rtabmap\_slam}.}
@@ -1333,12 +1339,12 @@ mostra a Figura \ref{fig:localization_rtabmap}.
     \end{subfigure}
 \end{figure}
 
-O \texttt{slam\_toolbox}, que têm seu resultado representado na
+O \texttt{slam\_toolbox}, que tem seu resultado representado na
 Figura \ref{fig:slam_toolbox_result}, por outro lado, apresentou um
-resultado melhor, diminuindo o erro de estimativa para
+resultado mais preciso, diminuindo o erro de estimativa para
 aproximadamente $0,37~\si{\meter}$ no final da trajetória. Isto
-aconteceu em grande parte porque não houve o acumulo de erro durante
-o trajeto do corredor, como mostra a Figura
+aconteceu, em grande parte, porque não houve o acumulo de erro
+durante o trajeto do corredor, como mostra a Figura
 \ref{fig:localization_slam_toolbox_error}, que havia acontecido na
 odometria visual. A Figura \ref{fig:localization_slam_toolbox} mostra
 que o ruído na estimativa de posição foi atenuado da mesma forma que
@@ -1382,17 +1388,17 @@ precisa.
 
 Como mencionado anteriormente, os dois sistemas de localização
 utilizados realizam o mapeamento simultaneamente com a localização.
-Portanto, tanto o \texttt{slam\_toolbox} quanto o
+Portanto, tanto o \texttt{slam\_toolbox}, quanto o
 \texttt{rtabmap\_slam} geraram um mapa do ambiente durante a execução
 da simulação. Estes mapas podem ser utilizados para novas sessões de
 localização, ou em mapas de custo para planejamento de trajetória.
 
 Na Figura \ref{fig:mapping_rtabmap}, é mostrado o mapa gerado pelo
-\texttt{rtabmap\_slam}, que cria um mapa utilizando os dados
+\texttt{rtabmap\_slam}, que foi criado utilizando os dados
 tridimensionais da câmera RGB-D, enquanto que na Figura
-\ref{fig:mapping_slam_toolbox} é mostrado o mapa gerado pelo
-\texttt{slam\_toolbox}, que utiliza uma conversão da imagem de
-profundidade em um feixe de luz em duas dimensões. A representação do
+\ref{fig:mapping_slam_toolbox} é mostrado o mapa produzido pelo
+\texttt{slam\_toolbox}, que usa um feixe de luz plano, obtido através
+da conversão da imagem de profundidade da câmera. A representação do
 ambiente no Gazebo foi sobreposta aos mapas para facilitar a
 comparação. Nestes mapas, as áreas em branco claro são áreas livres,
 e as áreas em preto são consideradas ocupadas, enquanto que as áreas
@@ -1419,7 +1425,7 @@ em cinza são desconhecidas.
 \end{figure}
 
 É possível perceber diferenças na geração destes mapas devido ao tipo de mensagem
-utilizado. O mapa gerado pelo \texttt{rtabmap\_slam} gera um representação mais
+utilizado. O mapa gerado pelo \texttt{rtabmap\_slam} elabora um representação mais
 detalhada da escada, percebendo-a desde sua base, enquanto que o \texttt{slam\_toolbox}
 só mapeia a escada na mesma altura da câmera, que é a altura da mensagem passada
 a ela.
@@ -1450,56 +1456,55 @@ apresentou uma estimativa mais precisa.
 
 Os resultados obtidos demonstram que a utilização da câmera no robô
 Twil permite o mapeamento do ambiente em tempo-real, possibilitando a
-navegação autônoma do robô em ambientes desconhecidos ou com
-obstáculos dinâmicos. Isto foi realizado através da atualização do
-mapa de custos utilizado pelo planejador de trajetórias. Com uma
-camada \textit{voxel}, responsável por detectar obstáculos
-tridimensionais no ambiente, e uma camada de inflação, que cria uma
-zona de segurança ao redor dos obstáculos, o robô é capaz de evitar
-colisões. Este sistema pode ser aprimorado com a utilização de outras
-camadas do mapa de custo, como a camada \textit{Spatio Temporal Voxel
+navegação autônoma do robô em locais desconhecidos ou com obstáculos
+dinâmicos. Isto foi realizado através da atualização do mapa de
+custos usado pelo planejador de trajetórias. Com uma camada
+\textit{voxel}, responsável por detectar obstáculos tridimensionais
+no ambiente, e uma camada de inflação, que cria uma zona de segurança
+ao redor dos obstáculos, o robô é capaz de evitar colisões. Este
+sistema pode ser aprimorado com a utilização de outras camadas do
+mapa de custo, como a camada \textit{Spatio Temporal Voxel
     Layer}~\cite{stlv_article}, que adiciona um decaimento temporal ao
 obstáculos detectados, já que eles podem ser temporários.
 
 Além disso, a câmera aprimorou a estimativa de posição do robô, que
-permite o seguimento correto da trajetória planejada. A combinação de
-odometria e localização que produziu a melhor estimativa foi a
-odometria visual, utilizando o pacote \texttt{rtabmap\_odom} com a
-localização do pacote \texttt{slam\_toolbox}.
+permite o seguimento correto da trajetória planejada, recomendando-se
+a combinação de odometria visual com o sistema de localização
+\texttt{slam\_toolbox} para esta aplicação.
 
-A escolha da odometria se da pelo desempenho superior da odometria
+A escolha da odometria se dá pelo desempenho superior da odometria
 visual em relação a odometria das rodas. Porém, a odometria das rodas
 apresentou um resultado pior do que o esperado, podendo ser causado
 por erros na descrição do robô, o que pode ser ajustado. Além disso,
 a odometria visual pode apresentar resultados inferiores em ambientes
-reais, devido ao maior ruído presente fora da simulação, que foi
-feita em condições ideias.
+reais, já que o teste em simulação é feito em condições ideias, sem a
+presença de ruído.
 
 Logo, em trabalhos futuros, recomenda-se ajustes no sistema de
 odometria das rodas, para garantir uma estimativa mais precisa da
-posição do robô. Como discutido anteriormente, a odometria das rodas
-apresentou um erro substantivo na estimada de odometria, que é o erro
-mais preocupante da odometria. Para mitigar este erro, é possível
-utilizar as informações de velocidade angular e orientação do IMU
-presente no robô para calcular a estimativa de posição.
+posição do robô. O erro de orientação apresentado neste estimativo é
+grave, já que cria uma divergência sem limite. Para mitigar este
+erro, é possível utilizar as informações de velocidade angular e
+orientação do IMU presente no robô para calcular a estimativa de
+posição.
 
-Isto pode ser feito utilizando o pacote \texttt{robot\_localization},
-retirando a utilização de dados da posição dada pela mensagem
-publicada pela odometria das rodas. Desta forma, a posição do robô
-seria calculada utilizando a velocidade linear das rodas e a
-orientação do IMU, obtendo assim uma estimativa com menor erro.
-Porém, a velocidade publicada pela odometria das rodas deve ser
-modificada para ser em relação a base do robô, como é esperado pelo
+Isto pode ser feito com o pacote \texttt{robot\_localization},
+desfazendo-se dos dados da posição dada pela mensagem publicada pela
+odometria das rodas. Desta forma, a posição do robô seria calculada
+utilizando a velocidade linear das rodas e a orientação do IMU,
+possibilitando a obtenção de uma estimativa com menor erro. Porém, a
+velocidade publicada pela odometria das rodas deve ser modificada
+para ser em relação a base do robô, como é esperado pelo
 \texttt{robot\_localization}, e não em relação ao sistema de
 coordenadas \texttt{odom}, como é publicada atualmente.
 
 Com a odometria das rodas ajustada, ambos sistemas de odometria devem
 ser comparados novamente. Em caso de desempenho semelhante,
-recomenda-se a utilização da odometria das rodas, por ser mais
-simples exigindo menor capacidade de computacional. Porém, caso a
-complexidade de processamento não seja um problema, ambas odometria
-podem ser utilizadas em conjunto, fundidas através de um filtro de
-Kalman para obter uma estimativa mais precisa da posição do robô.
+recomenda-se a utilização da odometria das rodas por ser mais
+simples, desta forma, exigindo menor complexidade de processamento.
+Porém, caso a exigência computacional não seja um problema, ambas
+estimativas podem ser utilizadas em conjunto, fundidas através de um
+filtro de Kalman para obter uma pose mais precisa.
 
 Em relação ao mapeamento, o pacote \texttt{rtabmap\_slam} criou um
 mapa mais detalhado do ambiente, devido a utilização de dados
@@ -1525,17 +1530,19 @@ Este trabalho atingiu o objetivo proposto de mapear o ambiente para
 navegação autônoma utilizando a câmera RGB-D do robô Twil, evitando
 assim colisões em ambientes dinâmicos ou pouco conhecidos. Porém, os
 testes foram realizados apenas em ambiente simulado, já que o sistema
-não foi implementado no robô real. Em trabalhos futuros, o
-desenvolvimento deste trabalho pode ser aplicado no robô real. Para
+não foi implementado no robô real. Em trabalhos futuros, os
+componentes aqui desenvolvidos podem ser aplicado no robô real. Para
 isso, o Gazebo deverá ser dispensado e os dados deverão todos ser
-obtidos através do robô real. Porém, primeiramente deve ser realizado
-os ajustes na odometria das rodas, detalhado na discussão deste
-trabalho. Ao implementar o sistema no robô real, é possível que seja
-necessária uma recalibração dos sistemas de odometria e localização.
-Neste caso, recomenda-se a utilização dos programas de gravação de
-sacolas utilizados neste trabalho para análise dos resultados, já que
-não deve existir diferença entre os tópicos publicados pelo robô real
-e pela simulação.
+obtidos através do mundo real. Porém, primeiramente deve ser
+realizado os ajustes na odometria das rodas, detalhados
+anteriormente.
+
+Ao implementar o sistema no robô real, é possível que seja necessária
+uma recalibração dos sistemas de odometria e localização. Neste caso,
+recomenda-se a utilização dos programas de gravação de sacolas
+produzidos neste trabalho para coleta e análise dos dados para
+calibração, já que os tópicos publicados pelo robô real e simulado
+devem ser os mesmos.
 
 \printbibliography
 
