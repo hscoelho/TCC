@@ -851,14 +851,14 @@ o \texttt{rtabmap\_slam}, resumidos na Tabela \ref{tab:localizacao}.
         \label{tab:localizacao}
         \small
         \begin{tabularx}{\linewidth}{c|c|c|c}
-            Pacote utilizado                        & Fonte de dados          & Tópico                      & Tipo de mensagem recebida        \\
+            Pacote utilizado                        & Fonte de dados          & Tópico                       & Tipo de mensagem recebida        \\
             \hline
-            \texttt{slam\_toolbox}                  & Câmera                  & \texttt{depth/image\_scan}  & \texttt{sensor\_msgs/LaserScan}  \\
+            \texttt{slam\_toolbox}                  & Câmera                  & \texttt{/depth/image\_scan}  & \texttt{sensor\_msgs/LaserScan}  \\
             \hline
-            \multirow{4}{*}{\texttt{rtabmap\_slam}} & \multirow{4}{*}{Câmera} & \texttt{depth/image\_raw}   & \texttt{sensor\_msgs/Image}      \\
-                                                    &                         & \texttt{depth/camera\_info} & \texttt{sensor\_msgs/CameraInfo} \\
-                                                    &                         & \texttt{color/image\_raw}   & \texttt{sensor\_msgs/Image}      \\
-                                                    &                         & \texttt{color/camera\_info} & \texttt{sensor\_msgs/CameraInfo} \\
+            \multirow{4}{*}{\texttt{rtabmap\_slam}} & \multirow{4}{*}{Câmera} & \texttt{/depth/image\_raw}   & \texttt{sensor\_msgs/Image}      \\
+                                                    &                         & \texttt{/depth/camera\_info} & \texttt{sensor\_msgs/CameraInfo} \\
+                                                    &                         & \texttt{/color/image\_raw}   & \texttt{sensor\_msgs/Image}      \\
+                                                    &                         & \texttt{/color/camera\_info} & \texttt{sensor\_msgs/CameraInfo} \\
         \end{tabularx}
     \end{center}
 \end{table}
