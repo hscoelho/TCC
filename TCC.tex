@@ -17,7 +17,8 @@
 \usepackage{fancybox}
 \usepackage{subcaption}
 \addbibresource{TCC.bib}
-\usepackage[]{todonotes}
+\usepackage[disable]{todonotes}
+\usepackage{tabularx}
 \setlength{\marginparwidth}{2cm}
 
 \begin{document}
@@ -35,12 +36,39 @@
 % resumo no idioma do documento
 \begin{abstract}
 
+    O presente trabalho apresenta um sistema de navegação autônoma,
+    aplicado no robô móvel Twil. Aproveitando o desenvolvimento de
+    trabalhos anteriores, este sistema foi estendido, com adição do
+    mapeamento do espaço onde o robô se movimenta. O mapa criado é
+    utilizado para aprimorar a estimativa de posição do robô, e para
+    replanejar trajetos em tempo real, evitando colisões. Isto foi
+    realizado com auxílio de ferramentas do ROS 2, como a biblioteca de
+    navegação autônoma \textit{Navigation2} e pacotes que incorporam
+    técnicas de mapeamento e localização simultâneas. O desempenho dos
+    sistemas desenvolvidos foi avaliado através de testes em um ambiente
+    simulado, com gráficos medindo a estimava de posição, comparação do
+    mapa obtido com o mapa real, e análise qualitativa do planejador de
+    trajetórias.
+
 \end{abstract}
 
 % resumo no outro idioma
 % como parâmetro devem ser passadas as palavras-chave
 % no outro idioma, separadas por vírgulas
-\begin{otherabstract}{KEYWORDS TRANSLATION PLACEHOLDER}
+\begin{otherabstract}{Mobile robotics, autonomous navigation, simultaneous localization and mapping}
+
+    This paper presents an autonomous navigation system, applied to the
+    Twil mobile robot. Taking advantage of the development of previous
+    works, this system was extended, with the addition of mapping of the
+    space in which the robot navigates. The generated map is used to
+    improve the robot's pose estimation, and to replan trajectories in
+    real time, avoiding collisions. This was done with the aid of tools
+    made for ROS 2, such as the \textit{Navigation2} navigation framework
+    and packages that perform simultaneous mapping and localization. The
+    performance of the developed systems was evaluated through tests in a
+    simulated environment, with graphs measuring the estimated position,
+    comparison of the obtained map with the real map, and qualitative
+    analysis of the path planner.
 
 \end{otherabstract}
 
@@ -164,7 +192,7 @@ modernos, com suporte para customização extensiva. O seu
 \textit{middleware}, \textit{Data Distribution Service}~(DDS), também
 é usado em sistemas de infraestrutura crítica, como aplicações
 militares, aeroespaciais e financeiras. Este padrão confere ao ROS
-ótima segurança e suporte para comunicação em tempo
+segurança e suporte para comunicação em tempo
 real~\cite{ROS2Article}.
 
 Um assunto relevante a este trabalho são os padrões de comunicação do
@@ -196,8 +224,18 @@ móvel utilizado neste trabalho é definido pela norma REP
 105~\cite{rep_105}. Esta especificação define quatro sistemas de
 coordenadas: \texttt{earth}, \texttt{map}, \texttt{odom} e
 \texttt{base\_link}. Logo, a posição da base do robô, chamada de
-\texttt{base\_link}, se da em relação a estes sistemas de
-coordenadas.
+\texttt{base\_link}, se da em através das transformações entre estes
+sistemas de coordenadas, como mostra a Figura \ref{fig:rep_105}.
+
+\begin{figure}[h]
+    {
+        \centering
+        \caption{Relação entre os sistemas de coordenadas utilizados na localização de um robô móvel.}
+        \label{fig:rep_105}
+        \includegraphics[width=0.8\textwidth]{tf_rep_105.png}\\
+    }
+    {\sourcecitation{\textcite{rep_105}.}}
+\end{figure}
 
 O sistema de coordenadas chamado de \texttt{earth} serve como
 referência global em aplicações com diversos mapas com interação de
@@ -323,7 +361,7 @@ fechamento de laço; e otimização do grafo.
 A construção do grafo de poses é feita utilizando os dados extraídos
 dos sensores de odometria e percepção. Cada nó deste grafo consiste
 na posição estimada do robô, dada pela odometria, com as informações
-obtidas pelo sensor ótico, comumente em forma de características da
+obtidas pelo sensor ótico, comumente em forma de \textit{features} da
 imagem.
 
 Após a adição de um nó, é feita a procura de candidatos para o
@@ -347,7 +385,7 @@ relação a sistemas de SLAM anteriores, como o GMapping, Karto, Hector
 e o próprio Cartographer.
 
 Estes pacotes utilizam representações bidimensionais do ambiente,
-sendo sensores baseados em varrimento a laser a fonte de dado mais
+sendo sensores baseados em \textit{scan} LASER a fonte de dado mais
 comum~\cite{SensorAndSLAM}. Porém, com o avanço da tecnologia,
 sensores Red Green Blue - Depth~(RGB-D) e câmeras estéreo estão se
 tornando mais acessíveis, influenciando o desenvolvimento de sistemas
@@ -401,7 +439,7 @@ Tradicionalmente, estes dados são armazenadas em mapas monolíticos,
 para utilização em planejamento de trajetórias. Esta implementação é
 aplicada com sucesso para caminhos curtos, mas pode apresentar
 dificuldade em lidar com ambientes dinâmicos
-maiores.\todo{referenciar}
+maiores~\cite{latombeRobotMotionPlanning}.
 
 Uma solução para este problema são mapas de custo com camadas, que
 separam o processamento de dados em camadas semanticamente
@@ -468,20 +506,11 @@ são normalmente utilizados \textit{Action servers} do ROS 2. Esta
 um arquivo em XML, permitindo a descrição de comportamentos de
 navegação únicos sem necessidade de programação.
 
-Além disso, todos estes servidores utilizam o conceito de
-\textit{Managed Nodes}, também conhecidos como \textit{Lifecycle
-    Nodes}. Estes nós utilizam máquinas de estados para gerenciar seu
-ciclo de vida, usando transições de estado desde sua criação a
-destruição. No caso de falha ou desligamento, o nó vai do estado
-ativo ao estado finalizado, seguindo a máquina de estados, permitindo
-que o sistema seja interrompido de forma segura.
-
-\todo{não acho que esse paragrafo ta bom(simplificacao ruim)}
 Na arquitetura, pode-se notar a utilização de dois mapas de custo, um
-local e outro global. O local, utilizado no servidor do
-controlador, realiza o planejamento a curto prazo e prevenção de
-colisão, enquanto o global, aplicado no servidor de
-planejamento, é usado principalmente para planejamento a longo prazo.
+local e outro global. O local, utilizado no servidor do controlador,
+realiza o planejamento a curto prazo e prevenção de colisão, enquanto
+o global, aplicado no servidor de planejamento, é usado
+principalmente para planejamento a longo prazo.
 
 \chapter{Metodologia}
 \label{desenvolvimento}
@@ -585,7 +614,7 @@ a análise dos resultados, que será apresentada no próximo capítulo.
 
 O modelo do robô está presente no pacote \texttt{twil\_description},
 que contém os arquivos de descrição do robô no formato XACRO, que é
-compilado para o formato URDF, utilizado pelo nodo
+expandido para o formato URDF, utilizado pelo nodo
 \texttt{robot\_state\_publisher}, que publica esta descrição em um
 tópico. Este modelo é utilizado no rviz para visualização do robô,
 como representado na Figura \ref{fig:robo_rviz}, e no Gazebo para
@@ -674,15 +703,12 @@ adicionados novos objetos a este mundo durante a execução da
 simulação no Gazebo.
 
 \section{Estimativa de posição do robô}
+\label{bib:estimativa_posicao}
 
 A estimativa de posição é feita utilizando o sistemas de coordenadas
-definido pela norma REP 105~\cite{rep_105}, que estabelece quatro
-sistemas de coordenadas: \texttt{earth}, \texttt{map}, \texttt{odom}
-e \texttt{base\_link}. Como só é utilizado um mapa, o sistema de
-coordenadas \texttt{earth} não é utilizado. Todas transformadas entre
-estes sistemas de coordenadas são publicadas no tópico \texttt{tf},
-por padrão do ROS 2. Estas transformadas são calculadas por dois
-sistemas, o de odometria e de localização.
+definido pela norma REP 105, conforme descrito na
+Seção~\ref{bib:estimativa_posicao}. Portanto, a pose do robô será
+estimada por dois sistemas, o de odometria e de localização.
 
 \subsection{Odometria}
 \label{met:odometria}
@@ -724,9 +750,10 @@ sistema de coordenadas global, neste caso, o \texttt{odom}, enquanto
 que o \texttt{robot\_localization} espera que a velocidade seja em
 referência a base do robô. Portanto, o \texttt{robot\_localization}
 não é capaz de estimar a posição do robô com base na velocidade
-publicada pelo \texttt{arc\_odometry}.
+publicada pelo \texttt{arc\_odometry} sem um nodo adicional para
+conversão.
 
-Porém, utilizando os dados de posição da odometria de rodas, não é
+Porém, ao utilizar os dados de posição da odometria de rodas, não é
 usado a velocidade para calcular a posição. Desta forma, a pose
 publicada pelo \texttt{robot\_localization} é a mesma que a estimada
 pelo \texttt{arc\_odometry}, já que esta é a única fonte de dados de
@@ -734,17 +761,13 @@ posição. Porém, a orientação e velocidade angular da odometria das
 rodas são fundidas com os dados do IMU, melhorando a precisão destes
 campos na mensagem publicada.
 
-\todo{ eu traduzi
-    "features" como caracteristicas, mas talvez seja um termo especifico
-    de visao computacional }
-
 Como alternativa a este sistema, foi implementado um sistema de
 odometria visual, publicado pelo executável \texttt{rgbd\_odometry}
 do pacote \texttt{rtabmap\_odom}, que utiliza imagens da câmera RGB-D
 com auxílio do sensor IMU para estimava da posição. Com a informação
-de profundidade, são comparadas características visuais entre imagens
-consecutivas, a velocidade do robô é estimada com um algoritmo
-baseado em \textit{Random Sample
+de profundidade, são comparadas \textit{features} visuais entre
+imagens consecutivas, a velocidade do robô é estimada com um
+algoritmo baseado em \textit{Random Sample
     Consensus}~(RANSAC)~\cite{rtabmap_odom}.
 
 É possível fundir os dados destes dois sistemas de odometria,
@@ -769,28 +792,25 @@ tipo de mensagem recebido por cada um.
     \begin{center}
         \caption{Sistemas de odometria}
         \label{tab:odometria}
-        \begin{tabular}{c|c|c}
-            Pacote utilizado                              & Fonte de dados          & Tipo de mensagem recebida                       \\
+        % a fonte de dados ficou "Rodas" na primeira linha porque encoder das rodas nao coube
+        \small
+        \begin{tabularx}{\linewidth}{c|c|c|c}
+            Pacote utilizado                              & Fonte de dados          & Tópico                       & Tipo da mensagem                 \\
             \hline
-            \multirow{2}{*}{\texttt{robot\_localization}} & Encoder das rodas       & \texttt{nav\_msgs/Odometry}                     \\
-                                                          & IMU                     & \texttt{sensor\_msgs/Imu}                       \\
+            \multirow{2}{*}{\texttt{robot\_localization}} & Rodas                   & \texttt{/controller/odom}    & \texttt{nav\_msgs/Odometry}      \\
+                                                          & IMU                     & \texttt{/sensor/imu}         & \texttt{sensor\_msgs/Imu}        \\
             \hline
-            \multirow{3}{*}{\texttt{rtabmap\_odom}}       & \multirow{2}{*}{Câmera} & \texttt{sensor\_msgs/CameraInfo}                \\
-                                                          &                         & \texttt{sensor\_msgs/Image}(RGB e profundidade) \\
-                                                          & IMU                     & \texttt{sensor\_msgs/Imu}                       \\
+            \multirow{5}{*}{\texttt{rtabmap\_odom}}       & \multirow{4}{*}{Câmera} & \texttt{/depth/image\_raw}   & \texttt{sensor\_msgs/Image}      \\
+                                                          &                         & \texttt{/depth/camera\_info} & \texttt{sensor\_msgs/CameraInfo} \\
+                                                          &                         & \texttt{/color/image\_raw}   & \texttt{sensor\_msgs/Image}      \\
+                                                          &                         & \texttt{/color/camera\_info} & \texttt{sensor\_msgs/CameraInfo} \\
+                                                          & IMU                     & \texttt{/sensor/imu}         & \texttt{sensor\_msgs/Imu}        \\
             \hline
-            \texttt{odom\_to\_tf\_ros2}                   & Posição no Gazebo       & \texttt{nav\_msgs/Odometry}                     \\
-        \end{tabular}
+            \texttt{odom\_to\_tf\_ros2}                   & Gazebo                  & \texttt{/fake\_odom}         & \texttt{nav\_msgs/Odometry}      \\
+        \end{tabularx}
     \end{center}
     % {\sourcecitation{Autor}}
 \end{table}
-\todo[inline]{
-    a camera no rgbd odom usa dois topicos do do tipo image,
-    por isso que coloquei "(rgb e profundidade)",
-    mas achei que ficou estranho
-
-    talvez faça sentido colocar o tipo de mensagem image duas vezes e
-    colocar rgb numa e profundidade na outra }
 
 \subsection{Localização}
 \label{met:localizacao}
@@ -919,7 +939,7 @@ aplicados para este fim, o \texttt{obstacle\_layer} e o
 empregam técnicas diferentes para atualizar o mapa. \todo{nao achei
     traducao para ray casting} O \texttt{obstacle\_layer} utiliza
 \textit{ray casting} em 2D para determinar a posição dos obstáculos.
-O \texttt{voxel\_layer}, por outro lado, cria um gride
+O \texttt{voxel\_layer}, por outro lado, cria um grade
 tri-dimensional, divido em blocos chamados de \textit{voxels}, que
 podem estar ocupados ou livres.
 
@@ -986,79 +1006,80 @@ por ambos pacotes.
 
 Devido à independência entre o mapeamento de custos e os demais
 sistemas desenvolvidos neste trabalho, foram realizados dois tipos de
-de testes diferentes. Para testar o mapeamento de custo, foram
-criadas trajetórias com e sem obstáculos para testar a performance
-das camadas de obstáculos e inflação. Já para conferir o
-funcionamento dos sistemas de odometria, localização e mapeamento
-SLAM, utilizaram-se arquivos de gravação de tópicos do ROS 2,
-chamados de sacolas, ou em inglês, \textit{bags}.
+testes diferentes. Para testar o mapeamento de custo, foram criadas
+trajetórias com e sem obstáculos para testar a performance das
+camadas de obstáculos e inflação. Já para conferir o funcionamento
+dos sistemas de odometria, localização e mapeamento SLAM,
+utilizaram-se arquivos de gravação de tópicos do ROS 2, chamados de
+\textit{rosbags}.
 
-Estas sacolas permitem a execução de diversas simulações usando os
+Estes arquivos permitem a execução de diferentes ensaios usando os
 mesmos dados de entrada. Outro benefício foi o alívio na exigência de
 processamento do computador utilizado, já que não foi necessário
-realizar a simulação no Gazebo e a execução dos nodos de localização
-simultaneamente.
+realizar a simulação do mundo real no Gazebo e a execução dos nodos
+de localização simultaneamente.
 
-Para a gravação das sacolas, foi criado um programa em \textit{bash}
-que contém todos os tópicos necessários para a execução dos sistemas
-de odometria e localização, além de tópicos auxiliares para
-comparação com a posição real do robô e visualização no rviz, como o
-\texttt{/ground\_truth}, que informa a posição real do robô,
-publicado pelo \textit{plugin} P3D do Gazebo. Este difere do tópico
-utilizado no sistema de odometria perfeita criado por este mesmo
-\textit{plugin} porque a posição deste é publicada em relação ao
-sistema de coordenadas \texttt{map} e não \texttt{odom}.
+Para a criação das \textit{rosbags}, foi feito um \textit{script} em
+\textit{bash} que contém todos os tópicos necessários para a execução
+dos sistemas de odometria e localização, além de tópicos auxiliares
+para visualização do experimento e para análise dos resultados, como
+a posição real do robô publicada no tópico \texttt{/ground\_truth},
+pelo \textit{plugin} P3D do Gazebo. O tópico utilizado no sistema de
+odometria perfeita criado por este mesmo \textit{plugin} difere deste
+porque a posição publicada nele é em relação ao sistema de
+coordenadas \texttt{odom} e não a referência global do \texttt{map},
+como no \texttt{/ground\_truth}.
 
-Os tópicos necessários para a execução dos sistemas de odometria
-estão nas Tabelas \ref{tab:odometria} e \ref{tab:localizacao},
-descritos anteriormente. Porém, além destes que são inscritos
-explicitamente na configuração do pacote, os sistemas de odometria e
-localização que incorporam a câmera RGB-D, também necessitam da
-árvore de transformações da base do robô à câmera, contida no tópico
-\texttt{/tf}. Portanto, esta informação deve estar presente durante a
-execução dos testes.
+Os tópicos necessários para a execução dos sistemas de estimativa de
+posição estão nas Tabelas \ref{tab:odometria} e
+\ref{tab:localizacao}, descritos anteriormente. Porém, além destes
+que são inscritos explicitamente na configuração do pacote, os
+sistemas de odometria e localização que incorporam a câmera RGB-D,
+também necessitam da árvore de transformações da base do robô à
+câmera, contida no tópico \texttt{/tf}. Portanto, esta informação
+deve estar presente durante a execução dos testes.
 
 Uma solução para disponibilizar esta transformada seria gravar o
 tópico \texttt{/tf} durante a execução da simulação. Porém, isto não
 é possível, porque este tópico já possui as transformadas entre
 \texttt{map}, \texttt{odom} e \texttt{base\_link}, o que causaria
 conflitos com as transformadas publicadas pelos sistemas de odometria
-e localização sendo testados. Logo, deverão ser executados os mesmos
-nodos que disponibilizam as informações de transformação da base do
-robô à câmera durante o teste.
+e localização sendo testados. Logo, deverão ser executados novamente
+os mesmos nodos que disponibilizam a posição da câmera em relação a
+base do robô.
 
 A transformação das juntas do robô são publicadas pelo
 \texttt{robot\_state\_publisher}. Existem dois tipos de juntas entre
 a base do robô e a câmera: estáticas, que tem sua informação definida
 no arquivo de descrição do robô, e dinâmicas, que são publicadas pelo
-Gazebo, através das configurações definidas no
-\texttt{twil\_bringup}, no tópico \texttt{joint\_states}. O
-executável \texttt{robot\_state\_publisher} utiliza este tópico e o
-arquivo de descrição para publicar as transformadas entre os
-componentes do robô no tópico \texttt{/tf}. Portanto, para evitar a
-execução do Gazebo, este tópico foi gravado na sacola, e foi
-executado o \texttt{robot\_state\_publisher} com o arquivo de
+\texttt{joint\_state\_broadcaster} no tópico \texttt{/joint\_states},
+conforme as configurações definidas no \texttt{twil\_bringup}. O
+executável \texttt{robot\_state\_publisher} lê as informações deste
+tópico e do arquivo de descrição para publicar as transformadas entre
+os componentes do robô no tópico \texttt{/tf}. Portanto, para evitar
+a execução do Gazebo, este tópico foi gravado no banco de dados, e
+foi executado o \texttt{robot\_state\_publisher} com o arquivo de
 descrição do robô, obtendo assim, o mesmo estado do robô durante a
-execução da simulação utilizada para a gravação da sacola.
+execução da simulação utilizada para a gravação da \textit{rosbag}.
 
 Para facilitar a execução deste publicador de transformadas do robô e
 dos sistemas de odometria e localização, foi criado um arquivo de
 inicialização com os nodos necessários para realizar os testes com as
-informações da sacola.
+entradas provenientes da \textit{rosbag}.
 
 Os resultados dos testes foram analisados utilizando o programa
 \textit{Plotjuggler}~\cite{plotjuggler}, que permite criar gráficos
-de tópicos do ROS em tempo real ou a partir de uma sacola. Optou-se
-por criar outro programa em \textit{bash} para gravar os tópicos do
-testes para criação dos gráficos no \textit{Plotjuggler}. Desta
-forma, os dados dos testes ficam gravados e podem ser analisados
-posteriormente.
+de tópicos do ROS em tempo real ou a partir de uma gravação. Optou-se
+por criar outro \textit{script} em \textit{bash} para gravar os dados
+relevantes dos testes para criação dos gráficos no
+\textit{Plotjuggler}. Desta forma, estes dados ficam armazenados e
+podem ser analisados posteriormente.
 
 Os gráficos foram construídos utilizando os dados de posição x e y
 das mensagens do tipo \texttt{nav\_msgs/Odometry}, publicadas pelos
-sistemas de odometria e pelo Gazebo com a posição real do robô. Para
-o sistemas de localização, foram utilizados os dados de posição x, y
-das mensagens do tipo
+sistemas de odometria e pelo Gazebo com a posição estimada e real do
+robô. Para o sistemas de localização, foram utilizados os dados de
+posição x e y das mensagens do tipo
 \texttt{geometry\_msgs/PoseWithCovarianceStamped}, que são referentes
 a posição global do robô calculada por estes pacotes, ou seja, a
 transformada entre \texttt{map}, \texttt{odom} e \texttt{base\_link}.
@@ -1066,7 +1087,7 @@ transformada entre \texttt{map}, \texttt{odom} e \texttt{base\_link}.
 O \textit{Plotjuggler} permite a utilização de programas escritos em
 Lua para manipulação dos dados. Aproveitando isto, é possível
 calcular o erro de posição entre a posição real e a posição
-estimação, conforme a Equação \ref{eq:erro_posicao}, e criar um
+estimação, conforme a Equação \ref{eq:erro_posicao}, para criar um
 gráfico com o erro de posição ao longo da distância real percorrida
 pelo robô.
 
@@ -1171,7 +1192,7 @@ não seria percebido, e o robô colidiria com a caixa.
 \section{Testes de odometria, localização e mapeamento SLAM}
 
 O testes de odometria, localização e mapeamento SLAM foram realizados
-na mesma sacola de dados, como descrito na seção \ref{met:testes},
+na mesma \textit{rosbag}, como descrito na seção \ref{met:testes},
 permitindo dessa forma, a mesma entrada em cada sistema.
 
 Na Figura \ref{fig:base_bag}, é mostrado o robô realizando a
@@ -1184,7 +1205,7 @@ possível comparar a percepção de diferentes ambientes neste teste,
 como em corredores estreitos e salas abertas. A distância total
 percorrida foi de $13,08~\si{\meter}$.
 
-Devido ao tamanho da sacola de dados em razão da captura das imagens
+Devido ao tamanho do banco de dados em razão da captura das imagens
 da câmera, não foi possível realizar uma simulação longa, que
 percorresse uma grande área do mapa e retornasse ao ponto inicial,
 testando assim o fechamento de laço, que é um ponto importante no
@@ -1203,7 +1224,7 @@ mapeamento de sistemas SLAM.
 \subsection{Odometria}
 
 Após o fim da simulação e da captura de dados, foram executados os
-sistemas de odometria na sacola gerada. Neste teste, utilizou-se a
+sistemas de odometria na gravação gerada. Neste teste, utilizou-se a
 transformada estática entre os sistemas de coordenadas \texttt{map} e
 \texttt{odom}, para comparar a odometria das rodas e visual.
 
@@ -1512,16 +1533,16 @@ tridimensionais. Porém, isto não afetou o desempenho da navegação,
 com o \texttt{slam\_toolbox} apresentando uma melhor estimativa de
 posição. Portanto, caso seja desejado um mapa do ambiente mais
 detalhado, recomenda-se a utilização do \texttt{rtabmap\_slam}, em
-uma sacola de dados, e não durante a navegação em tempo-real, da
-mesma forma que foi feito neste trabalho.
+uma gravação, e não durante a navegação em tempo-real, da mesma forma
+que foi feito neste trabalho.
 
 Além disso, devem ser realizados testes de SLAM que percorram um
 caminho que revisite áreas já vistas, para testar o fechamento de
 laço. Não foi possível testar isto neste trabalho, porque a execução
 da simulação em conjunto com os sistemas de odometria e localização
-exigiu muita capacidade de processamento, e as sacolas de dados, que
+exigiu muita capacidade de processamento, e os arquivos de dados, que
 permitem separar a execução destes sistemas, não são praticáveis em
-trajetórias longas, devido ao tamanho do arquivo gerado.
+trajetórias longas, devido ao armazenamento necessário.
 
 \chapter{Conclusão}
 \label{conclusao}
@@ -1539,10 +1560,10 @@ anteriormente.
 
 Ao implementar o sistema no robô real, é possível que seja necessária
 uma recalibração dos sistemas de odometria e localização. Neste caso,
-recomenda-se a utilização dos programas de gravação de sacolas
-produzidos neste trabalho para coleta e análise dos dados para
-calibração, já que os tópicos publicados pelo robô real e simulado
-devem ser os mesmos.
+recomenda-se a utilização dos programas de \textit{scripts} de
+\textit{rosbags} produzidos neste trabalho para coleta e análise dos
+dados para calibração, já que os tópicos publicados pelo robô real e
+simulado devem ser os mesmos.
 
 \printbibliography
 
