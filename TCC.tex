@@ -1074,13 +1074,10 @@ dos sistemas de odometria e localização, foi criado um arquivo de
 inicialização com os nodos necessários para realizar os testes com as
 entradas provenientes da \textit{rosbag}.
 
-Os resultados dos testes foram analisados utilizando o programa
-\textit{Plotjuggler}~\cite{plotjuggler}, que permite criar gráficos
-de tópicos do ROS em tempo real ou a partir de uma gravação. Optou-se
-por criar outro \textit{script} em \textit{bash} para gravar os dados
-relevantes dos testes para criação dos gráficos no
-\textit{Plotjuggler}. Desta forma, estes dados ficam armazenados e
-podem ser analisados posteriormente.
+Optou-se por criar outro \textit{script} em \textit{bash} para gravar
+os dados relevantes dos testes para análise posterior. Desta forma,
+foi possível converter os dados da \textit{rosbag} para o formato
+csv, que foi utilizado para criação de gráficos dos resultados.
 
 Os gráficos foram construídos utilizando os dados de posição x e y
 das mensagens do tipo \texttt{nav\_msgs/Odometry}, publicadas pelos
@@ -1091,12 +1088,10 @@ posição x e y das mensagens do tipo
 a posição global do robô calculada por estes pacotes, ou seja, a
 transformada entre \texttt{map}, \texttt{odom} e \texttt{base\_link}.
 
-O \textit{Plotjuggler} permite a utilização de programas escritos em
-Lua para manipulação dos dados. Aproveitando isto, é possível
-calcular o erro de posição entre a posição real e a posição
-estimação, conforme a Equação \ref{eq:erro_posicao}, para criar um
-gráfico com o erro de posição ao longo da distância real percorrida
-pelo robô.
+O erro da estimativa de posição foi calculado através da diferença
+entre a posição real e a posição estimação, conforme a Equação
+\ref{eq:erro_posicao}. Utilizando os dados dos testes, foi criado um
+gráfico com esse erro longo da distância real percorrida pelo robô.
 
 \begin{equation}
     \label{eq:erro_posicao}
